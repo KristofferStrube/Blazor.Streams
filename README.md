@@ -10,12 +10,14 @@ A Blazor wrapper for the browser API [Streams](https://streams.spec.whatwg.org/)
 
 The API standardizes ways to create, compose, and consume streams of data that map to low-level I/O primitives in the browser. This wrapper tries to implement a wrapper around the API for Blazor so that we can easily and safely interact with the streams of the browser.
 
-<!--## Demo
+**The wrapper API is still being developed so the API Coverage is very limited currently.**
+
+# Demo
 The sample project can be demoed at https://kristofferstrube.github.io/Blazor.Streams/
 
 On each page you can find the corresponding code for the example in the top right corner.
 
-On the *API Coverage Status* page you can get an overview over what parts of the API we support currently-->
+On the *API Coverage Status* page you can get an overview over what parts of the API we support currently
 
 # Getting Started
 The package can be used in Blazor projects.
