@@ -37,27 +37,11 @@ You need to reference the package in order to use it in your pages. This can be 
 ```razor
 @using KristofferStrube.Blazor.Streams
 ```
-## Add to service collection
-An easy way to make the service available in all your pages is by registering it in the `IServiceCollection` so that it can be dependency injected in the pages and components that need it. This is done in `Program.cs` by adding the following before you build the host and run it.
-```csharp
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
-
-// Other services are added.
-
-builder.Services.AddStreamsService();
-
-await builder.Build().RunAsync();
-```
-## Inject in page
-Then the service can be injected in a page like so:
+## Creating wrapper instance
+We can call the constructor for `ReadableStream`, `WritableStream`, or `TransformStream` from CSharp and work on these objects like so:
 ```razor
-@inject StreamsService StreamsService;
-```
-Then you can use `StreamsService` to create a wrapper instance around either a `ReadableStream`, `WritableStream`, or `TransformStream`. The difference between these are described later in this README.
-
 **TODO: Sample of use**
+```
 
 # Nomenclature
 ## ReadableStream
