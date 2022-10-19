@@ -20,11 +20,11 @@
         {
             if (supportedRows.Any(interval => i >= interval.start && i <= interval.end))
             {
-                compareLines.Add($"""<span style="background-color:lightgreen;display:block;">{lines[i]}</span>""");
+                compareLines.Add($"""<span style="background-color:lightgreen;display:block;min-height:21px;">{lines[i]}</span>""");
             }
             else
             {
-                compareLines.Add($"""<span style="background-color:pink;display:block;">{lines[i]}</span>""");
+                compareLines.Add($"""<span style="background-color:pink;display:block;min-height:21px;">{lines[i]}</span>""");
             }
         }
 
