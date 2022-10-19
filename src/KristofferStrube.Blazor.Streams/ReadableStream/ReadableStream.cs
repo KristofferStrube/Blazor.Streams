@@ -1,7 +1,6 @@
-﻿using KristofferStrube.Blazor.Streams;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
-namespace KristofferStrube.Blazor.FileSystemAccess;
+namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#rs">Streams browser specs</see>

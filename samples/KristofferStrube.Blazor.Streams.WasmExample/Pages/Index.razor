@@ -1,6 +1,42 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Index</PageTitle>
 
-<h2>We still need a demo of this</h2>
-<p>We will be inspired by these but utilize .NET data: <a href="https://streams.spec.whatwg.org/demos/" target="_blank">https://streams.spec.whatwg.org/demos/</a></p>
+<h2>Reading a Stream</h2>
+On this page we create a <code>MemoryStream</code> of @dataSize bytes in C# and parse that to JavaScript to create a <code>IJSObjectReference</code> for the stream.
+<br />
+From the JS reference we create a wrapper around the <code>ReadableStream</code> and gets the <code>ReadableStreamDefaultReader</code> of that.
+<br />
+Using the reader we read the chunks until there are no more.
+@for (int i = 0; i < chunkSizes.Count; i++)
+{
+    <div><b>chunk @i: </b> @chunkSizes[i] bytes</div>
+}
+
+
+@code {
+    private List<int> chunkSizes = new();
+    private int dataSize = 1000 * 1024;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            using var data = new System.IO.MemoryStream(new byte[dataSize]);
+            using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+            var jSStreamReference = await JSRuntime.InvokeAsync<IJSObjectReference>("jSStreamReference", streamRef);
+            var readableStream = new Streams.ReadableStream(JSRuntime, jSStreamReference);
+            var readableStreamReader = (ReadableStreamDefaultReader)(await readableStream.GetReaderAsync());
+            var read = await readableStreamReader.ReadAsync();
+            while (!await read.GetDoneAsync())
+            {
+                var length = await JSRuntime.InvokeAsync<int>("getAttribute", await read.GetValueAsync(), "length");
+                chunkSizes.Add(length);
+                await Task.Delay(100);
+                read = await readableStreamReader.ReadAsync();
+                StateHasChanged();
+            }
+        }
+    }
+}
