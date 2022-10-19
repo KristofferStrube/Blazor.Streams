@@ -38,7 +38,7 @@ You need to reference the package in order to use it in your pages. This can be 
 @using KristofferStrube.Blazor.Streams
 ```
 ## Creating wrapper instance
-We can call the constructor for `ReadableStream`, `WritableStream`, or `TransformStream` from CSharp and work on these objects like so:
+We can call the constructor for `ReadableStream`, `WritableStream`, or `TransformStream` from C# and work on these objects like so:
 ```razor
 **TODO: Sample of use**
 ```
