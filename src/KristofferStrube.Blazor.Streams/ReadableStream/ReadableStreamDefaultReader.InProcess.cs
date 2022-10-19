@@ -13,10 +13,10 @@ public class ReadableStreamDefaultReaderInProcess : ReadableStreamReaderInProces
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="stream">A <see cref="ReadableStream"/> wrapper instance.</param>
     /// <returns></returns>
-    public static ReadableStreamDefaultReaderInProcess Create(IJSRuntime jSRuntime, ReadableStream stream)
+    public static async Task<ReadableStreamDefaultReaderInProcess> CreateAsync(IJSRuntime jSRuntime, ReadableStream stream)
     {
-        IJSInProcessObjectReference inProcesshelper = jSRuntime.GetInProcessHelper();
-        IJSObjectReference jSInstance = inProcesshelper.Invoke<IJSObjectReference>("constructReadableStreamDefaultReader", stream.JSReference);
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableStreamDefaultReader", stream.JSReference);
         return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcesshelper, jSInstance);
     }
 
@@ -26,15 +26,15 @@ public class ReadableStreamDefaultReaderInProcess : ReadableStreamReaderInProces
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
-    internal ReadableStreamDefaultReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSObjectReference jSReference) : base(jSRuntime, inProcessHelper, jSReference) { }
+    internal ReadableStreamDefaultReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, inProcessHelper, jSReference) { }
 
     /// <summary>
     /// Reads a chunk of a stream.
     /// </summary>
     /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
-    public ReadableStreamReadResultInProcess Read()
+    public async Task<ReadableStreamReadResultInProcess> ReadAsync()
     {
-        IJSObjectReference jSInstance = ((IJSInProcessObjectReference)JSReference).Invoke<IJSObjectReference>("read");
+        IJSInProcessObjectReference jSInstance = await JSReference.InvokeAsync<IJSInProcessObjectReference>("read");
         return new ReadableStreamReadResultInProcess(jSRuntime, inProcessHelper, jSInstance);
     }
 }

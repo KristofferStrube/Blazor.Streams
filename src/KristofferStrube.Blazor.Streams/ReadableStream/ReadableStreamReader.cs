@@ -39,7 +39,7 @@ public abstract class ReadableStreamReader
     public async Task<IJSObjectReference> GetClosedAsync()
     {
         IJSObjectReference helper = await helperTask.Value;
-        return await helper.InvokeAsync<IJSObjectReference>("getAttribyte", JSReference, "closed");
+        return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "closed");
     }
 
     /// <summary>

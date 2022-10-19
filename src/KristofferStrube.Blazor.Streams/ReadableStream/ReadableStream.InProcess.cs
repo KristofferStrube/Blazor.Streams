@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using System.Linq.Expressions;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -7,6 +8,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class ReadableStreamInProcess : ReadableStream
 {
+    public new IJSInProcessObjectReference JSReference;
     private readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
@@ -15,9 +17,9 @@ public class ReadableStreamInProcess : ReadableStream
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSInstance">An JS reference to an existing ReadableStream.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStreamInProcess"/> which can access attributes synchronously.</returns>
-    public static ReadableStreamInProcess Create(IJSRuntime jSRuntime, IJSObjectReference jSInstance)
+    public static async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSInstance)
     {
-        IJSInProcessObjectReference inProcesshelper = jSRuntime.GetInProcessHelper();
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
         return new ReadableStreamInProcess(jSRuntime, inProcesshelper, jSInstance);
     }
 
@@ -28,10 +30,10 @@ public class ReadableStreamInProcess : ReadableStream
     /// <param name="underlyingSource">A JS reference to an object equivalent to a <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">JS UnderlyingSource</see>.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStreamInProcess"/> which can access attributes synchronously.</returns>
-    public static ReadableStreamInProcess Create(IJSRuntime jSRuntime, IJSObjectReference? underlyingSource = null, QueingStrategy? strategy = null)
+    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference? underlyingSource = null, QueingStrategy? strategy = null)
     {
-        IJSInProcessObjectReference inProcesshelper = jSRuntime.GetInProcessHelper();
-        IJSObjectReference jSInstance = inProcesshelper.Invoke<IJSObjectReference>("constructReadableStream", underlyingSource, strategy);
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableStream", underlyingSource, strategy);
         return new ReadableStreamInProcess(jSRuntime, inProcesshelper, jSInstance);
     }
 
@@ -41,16 +43,16 @@ public class ReadableStreamInProcess : ReadableStream
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamInProcess"/>.</param>
-    internal ReadableStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSObjectReference jSReference) : base(jSRuntime, jSReference)
+    internal ReadableStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
+        JSReference = jSReference;
     }
 
     /// <summary>
     /// Indicates whether the stream already has a reader.
     /// </summary>
     /// <returns><see langword="true"/> if the internal reader is a <see cref="ReadableStreamDefaultReader"/> or a <see cref="ReadableStreamBYOBReader"/> and returns <see langword="false"/> else meaning that the internal reader is <c>undefined</c></returns>
-
     public bool Locked => inProcessHelper.Invoke<bool>("getAttribute", JSReference, "locked");
 
     /// <summary>
@@ -69,7 +71,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// <returns>If <paramref name="options"/> is <see langword="not"/> <see langword="null"/> and the <see cref="ReadableStreamGetReaderOptions.Mode"/> is <see cref="ReadableStreamReaderMode.Byob"/> it returns a <see cref="ReadableStreamBYOBReaderInProcess"/> else it returns a <see cref="ReadableStreamDefaultReaderInProcess"/>.</returns>
     public ReadableStreamReaderInProcess GetReader(ReadableStreamGetReaderOptions? options = null)
     {
-        IJSObjectReference jSInstance = ((IJSInProcessObjectReference)JSReference).Invoke<IJSObjectReference>("getReader", options);
+        IJSInProcessObjectReference jSInstance = JSReference.Invoke<IJSInProcessObjectReference>("getReader", options);
         if (options?.Mode is ReadableStreamReaderMode.Byob)
         {
             return new ReadableStreamBYOBReaderInProcess(jSRuntime, inProcessHelper, jSInstance);

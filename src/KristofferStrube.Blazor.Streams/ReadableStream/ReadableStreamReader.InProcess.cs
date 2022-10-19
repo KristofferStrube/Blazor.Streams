@@ -7,6 +7,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public abstract class ReadableStreamReaderInProcess : ReadableStreamReader
 {
+    public new IJSInProcessObjectReference JSReference;
     protected readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
@@ -15,9 +16,10 @@ public abstract class ReadableStreamReaderInProcess : ReadableStreamReader
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamReader"/>.</param>
-    internal ReadableStreamReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSObjectReference jSReference) : base(jSRuntime, jSReference)
+    internal ReadableStreamReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
+        JSReference = jSReference;
     }
 
     /// <summary>
@@ -33,7 +35,7 @@ public abstract class ReadableStreamReaderInProcess : ReadableStreamReader
     /// Gets a JS reference to the closed attribute.
     /// </summary>
     /// <returns></returns>
-    public IJSObjectReference Closed => inProcessHelper.Invoke<IJSObjectReference>("getAttribyte", JSReference, "closed");
+    public IJSObjectReference Closed => inProcessHelper.Invoke<IJSObjectReference>("getAttribute", JSReference, "closed");
 
     /// <summary>
     /// Cancels the underlying stream which is equivalent to <see cref="ReadableStreamInProcess.Cancel"/>

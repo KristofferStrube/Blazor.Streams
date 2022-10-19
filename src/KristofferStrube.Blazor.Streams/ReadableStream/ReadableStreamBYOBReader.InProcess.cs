@@ -13,10 +13,10 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamReaderInProcess
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="stream">A <see cref="ReadableStream"/> wrapper instance.</param>
     /// <returns></returns>
-    public static ReadableStreamBYOBReaderInProcess Create(IJSRuntime jSRuntime, ReadableStream stream)
+    public static async Task<ReadableStreamBYOBReaderInProcess> CreateAsync(IJSRuntime jSRuntime, ReadableStream stream)
     {
-        IJSInProcessObjectReference inProcesshelper = jSRuntime.GetInProcessHelper();
-        IJSObjectReference jSInstance = inProcesshelper.Invoke<IJSObjectReference>("constructReadableStreamDefaultReader", stream.JSReference);
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableStreamDefaultReader", stream.JSReference);
         return new ReadableStreamBYOBReaderInProcess(jSRuntime, inProcesshelper, jSInstance);
     }
 
@@ -26,7 +26,7 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamReaderInProcess
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
-    internal ReadableStreamBYOBReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSObjectReference jSReference) : base(jSRuntime, inProcessHelper, jSReference) { }
+    internal ReadableStreamBYOBReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, inProcessHelper, jSReference) { }
 
     /// <summary>
     /// Reads a chunk of a stream.
@@ -34,7 +34,7 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamReaderInProcess
     /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
     public ReadableStreamReadResultInProcess Read(ArrayBufferView view)
     {
-        IJSObjectReference jSInstance = inProcessHelper.Invoke<IJSObjectReference>("read", view);
+        IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("read", view);
         return new ReadableStreamReadResultInProcess(jSRuntime, inProcessHelper, jSInstance);
     }
 }
