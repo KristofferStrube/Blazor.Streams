@@ -4,3 +4,14 @@ export function constructReadableStream(underlyingSource, strategy) {
     return new ReadableStream(underlyingSource, strategy);
 }
 
+export function constructReadableStreamDefaultReader(stream) {
+    return new ReadableStreamDefaultReader(stream);
+}
+
+export function constructReadableStreamBYOBReader(stream) {
+    return new ReadableStreamBYOBReader(stream);
+}
+
+export function constructByteArray(size) {
+    return new Uint8Array(size);
+}

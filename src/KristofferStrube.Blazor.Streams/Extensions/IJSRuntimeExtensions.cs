@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 
-namespace KristofferStrube.Blazor.Streams.Extensions;
+namespace KristofferStrube.Blazor.Streams;
 
 internal static class IJSRuntimeExtensions
 {
