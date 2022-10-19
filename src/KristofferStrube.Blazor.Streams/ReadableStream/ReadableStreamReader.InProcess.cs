@@ -28,7 +28,7 @@ public abstract class ReadableStreamReaderInProcess : ReadableStreamReader
     /// <returns></returns>
     public void ReleaseLock()
     {
-        ((IJSInProcessObjectReference)JSReference).InvokeVoid("releaseLock");
+        JSReference.InvokeVoid("releaseLock");
     }
 
     /// <summary>
@@ -42,6 +42,6 @@ public abstract class ReadableStreamReaderInProcess : ReadableStreamReader
     /// </summary>
     public void Cancel()
     {
-        ((IJSInProcessObjectReference)JSReference).InvokeVoid("cancel");
+        JSReference.InvokeVoid("cancel");
     }
 }

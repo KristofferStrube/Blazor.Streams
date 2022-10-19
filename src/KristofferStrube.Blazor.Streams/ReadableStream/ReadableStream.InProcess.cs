@@ -1,5 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using System.Linq.Expressions;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -61,7 +60,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// <returns></returns>
     public void Cancel()
     {
-        ((IJSInProcessObjectReference)JSReference).InvokeVoid("cancel");
+        JSReference.InvokeVoid("cancel");
     }
 
     /// <summary>
