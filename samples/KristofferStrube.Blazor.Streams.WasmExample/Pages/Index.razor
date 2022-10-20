@@ -27,7 +27,7 @@ Using the reader we read the chunks until there are no more.
             using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
             var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
             var readableStream = await Streams.ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
-            var readableStreamReader = (ReadableStreamDefaultReaderInProcess)(readableStream.GetReader());
+            var readableStreamReader = readableStream.GetDefaultReader();
             var read = await readableStreamReader.ReadAsync();
             while (!read.Done)
             {

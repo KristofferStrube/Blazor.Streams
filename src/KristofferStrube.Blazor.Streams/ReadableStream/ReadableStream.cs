@@ -74,6 +74,24 @@ public class ReadableStream : IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// Helper method for creating a <see cref="ReadableStreamBYOBReader"/> without having to instantiate the options parameter yourself and where you don't need to cast the result from <see cref="GetReaderAsync(ReadableStreamGetReaderOptions?)"/>.
+    /// </summary>
+    /// <returns>The <see cref="ReadableStreamBYOBReader"/> using the <see cref="GetReaderAsync(ReadableStreamGetReaderOptions?)"/> method.</returns>
+    public async Task<ReadableStreamBYOBReader> GetBYOBReaderAsync()
+    {
+        return (ReadableStreamBYOBReader)await GetReaderAsync(new() { Mode = ReadableStreamReaderMode.Byob });
+    }
+
+    /// <summary>
+    /// Helper method for creating a <see cref="ReadableStreamDefaultReader"/> without needing to cast the result from <see cref="GetReaderAsync(ReadableStreamGetReaderOptions?)"/>.
+    /// </summary>
+    /// <returns>The <see cref="ReadableStreamDefaultReader"/> using the <see cref="GetReaderAsync(ReadableStreamGetReaderOptions?)"/> method.</returns>
+    public async Task<ReadableStreamDefaultReader> GetDefaultReaderAsync()
+    {
+        return (ReadableStreamDefaultReader)await GetReaderAsync();
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (helperTask.IsValueCreated)

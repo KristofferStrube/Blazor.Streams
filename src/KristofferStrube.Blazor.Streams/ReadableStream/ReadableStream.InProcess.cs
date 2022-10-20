@@ -3,7 +3,7 @@
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
-/// <see href="https://streams.spec.whatwg.org/#rs">Streams browser specs</see>
+/// <see href="https://streams.spec.whatwg.org/#rs-class-definition">Streams browser specs</see>
 /// </summary>
 public class ReadableStreamInProcess : ReadableStream
 {
@@ -79,5 +79,23 @@ public class ReadableStreamInProcess : ReadableStream
         {
             return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcessHelper, jSInstance);
         }
+    }
+
+    /// <summary>
+    /// Helper method for creating a <see cref="ReadableStreamBYOBReaderInProcess"/> without having to instantiate the options parameter yourself and where you don't need to cast the result from <see cref="GetReader(ReadableStreamGetReaderOptions?)"/>.
+    /// </summary>
+    /// <returns>The <see cref="ReadableStreamBYOBReaderInProcess"/> using the <see cref="GetReader(ReadableStreamGetReaderOptions?)"/> method.</returns>
+    public ReadableStreamBYOBReaderInProcess GetBYOBReader()
+    {
+        return (ReadableStreamBYOBReaderInProcess)GetReader(new() { Mode = ReadableStreamReaderMode.Byob });
+    }
+
+    /// <summary>
+    /// Helper method for creating a <see cref="ReadableStreamDefaultReaderInProcess"/> without needing to cast the result from <see cref="GetReader(ReadableStreamGetReaderOptions?)"/>.
+    /// </summary>
+    /// <returns>The <see cref="ReadableStreamDefaultReaderInProcess"/> using the <see cref="GetReader(ReadableStreamGetReaderOptions?)"/> method.</returns>
+    public ReadableStreamDefaultReaderInProcess GetDefaultReader()
+    {
+        return (ReadableStreamDefaultReaderInProcess)GetReader();
     }
 }
