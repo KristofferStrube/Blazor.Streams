@@ -12,6 +12,16 @@ public class ReadableStream : IAsyncDisposable
     protected readonly IJSRuntime jSRuntime;
 
     /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStream"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStream"/>.</param>
+    public static ReadableStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return new ReadableStream(jSRuntime, jSReference);
+    }
+
+    /// <summary>
     /// Constructs a wrapper instance using the standard constructor
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
@@ -30,7 +40,7 @@ public class ReadableStream : IAsyncDisposable
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStream"/>.</param>
-    public ReadableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    internal ReadableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         helperTask = new(() => jSRuntime.GetHelperAsync());
         JSReference = jSReference;

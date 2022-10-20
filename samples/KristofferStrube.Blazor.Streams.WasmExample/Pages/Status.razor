@@ -5,7 +5,7 @@
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
 
-<PageTitle>File System Access - Status</PageTitle>
+<PageTitle>Streams - Status</PageTitle>
 
 <pre><code>@((MarkupString)compareText)</code></pre>
 
@@ -32,7 +32,7 @@
         StateHasChanged();
     }
 
-    private (int start, int end)[] supportedRows = new (int start, int end)[] { (1, 7), (13, 21), (55, 82), (186, 191) };
+    private (int start, int end)[] supportedRows = new (int start, int end)[] { (0, 7), (12, 21), (55, 82), (186, 191) };
 
     private const string webIDL = @"[Exposed=*, Transferable]
 interface ReadableStream {

@@ -1,0 +1,56 @@
+﻿@page "/StreamReadAsStrings"
+@inject IJSInProcessRuntime JSRuntime
+
+<PageTitle>Streams - Iterate As ByteArrays</PageTitle>
+
+<h2>Reading a stream as byte arrays</h2>
+On this page we create a <code>MemoryStream</code> of @dataSize bytes in C# from a Lorem Ipsum string and parse that to JavaScript to create a <code>IJSObjectReference</code> for the stream.
+<br />
+From the JS reference we create a <code>ReadableStream</code> and gets it default reader.
+<br />
+We iterate the reader using <code>await foreach (string chunk in reader.IterateStrings())</code> and appends each chunk to the shown result.
+<br />
+<b>@result</b>
+
+
+@code {
+    private readonly System.Text.Encoding encoding = System.Text.Encoding.Unicode;
+    private string result = "";
+    private int dataSize = 0;
+    private string loremIpsum = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis id nulla orci. Donec id tellus sagittis, suscipit turpis ac, efficitur magna. Phasellus sit amet rutrum nisl, ut tristique enim. Integer nec purus nec enim blandit laoreet. Cras maximus luctus interdum. Phasellus pellentesque tristique neque imperdiet tincidunt. Pellentesque bibendum tristique ipsum at fringilla. In ornare in dolor sit amet pellentesque. Maecenas fermentum mi purus, vitae malesuada lorem gravida quis. In auctor accumsan mattis.
+
+Nunc sed elit sem.Curabitur pharetra nunc sed diam venenatis, vel lacinia nulla volutpat. Praesent ornare congue nisi, ut porttitor leo dignissim id.Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam nulla orci, commodo sed massa in, elementum tristique massa.Donec varius augue dui, consectetur molestie nisi feugiat eu.Morbi id leo non ligula ullamcorper dignissim. Duis sit amet posuere ante.Pellentesque hendrerit pretium orci, eu tincidunt purus semper pellentesque.Maecenas dapibus quam ac ex commodo, at dignissim arcu consequat.
+
+Donec congue nisi eget turpis porta, a posuere nisl blandit. Suspendisse potenti. Sed sed est aliquet, faucibus sapien in, tincidunt mi. Sed vulputate gravida lacus sit amet laoreet.Donec egestas dolor sed risus hendrerit volutpat.Pellentesque tortor nisi, ultrices non nibh quis, tristique molestie leo.In rutrum purus vel iaculis tincidunt.
+
+Sed lorem lectus, vestibulum ut orci ut, vulputate interdum nibh.Duis vehicula turpis neque, efficitur lacinia quam suscipit sit amet. Morbi sit amet tempor lacus.Quisque pretium gravida ornare. Nullam aliquet tincidunt gravida. Suspendisse nec pellentesque sapien. Proin eget elit mattis, hendrerit velit at, pulvinar risus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.Quisque feugiat odio ut ullamcorper consequat. Proin sit amet felis malesuada, suscipit quam id, ullamcorper tellus. Vivamus scelerisque aliquam aliquet. Nunc nec commodo tellus, ut accumsan urna.Aliquam et odio ac odio tincidunt dictum.
+
+Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, pharetra sit amet magna sit amet, faucibus auctor neque.Cras molestie dignissim dui ac porta. Quisque dictum lorem feugiat ipsum ultricies, sit amet malesuada enim blandit.Vivamus luctus, elit ut ultrices iaculis, nisl augue convallis dui, ac euismod leo leo non arcu. Ut at justo velit. Quisque pulvinar enim non malesuada ultrices. Etiam non lacus lacus. 😁";
+
+    protected override void OnInitialized()
+    {
+        dataSize = encoding.GetBytes(loremIpsum).Length;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            using var data = new System.IO.MemoryStream();
+            using var writer = new StreamWriter(data, encoding);
+            writer.Write(loremIpsum);
+            writer.Flush();
+            data.Position = 0;
+            using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+            var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+            var readableStream = Streams.ReadableStream.Create(JSRuntime, jSStreamReference);
+            var reader = await readableStream.GetDefaultReaderAsync();
+            await foreach (string chunk in reader.IterateStrings(encoding))
+            {
+                result += chunk;
+                await Task.Delay(100);
+                StateHasChanged();
+            }
+        }
+    }
+}

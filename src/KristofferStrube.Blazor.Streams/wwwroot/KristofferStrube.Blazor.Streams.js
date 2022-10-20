@@ -15,3 +15,8 @@ export function constructReadableStreamBYOBReader(stream) {
 export function constructByteArray(size) {
     return new Uint8Array(size);
 }
+
+export function byteArray(object) {
+    var bytes = new Uint8Array(object);
+    return bytes;
+}

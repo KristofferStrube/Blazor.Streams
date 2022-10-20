@@ -5,7 +5,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#typedefdef-readablestreamreader">Streams browser specs</see>
 /// </summary>
-public abstract class ReadableStreamReader
+public abstract class ReadableStreamReader : IAsyncDisposable
 {
     public readonly IJSObjectReference JSReference;
     protected readonly Lazy<Task<IJSObjectReference>> helperTask;
@@ -49,5 +49,17 @@ public abstract class ReadableStreamReader
     public async Task CancelAsync()
     {
         await JSReference.InvokeVoidAsync("cancel");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await ReleaseLockAsync();
+        await JSReference.DisposeAsync();
+        if (helperTask.IsValueCreated)
+        {
+            IJSObjectReference module = await helperTask.Value;
+            await module.DisposeAsync();
+        }
+        GC.SuppressFinalize(this);
     }
 }

@@ -1,14 +1,14 @@
-﻿@page "/"
+﻿@page "/IterateReadableStream"
 @inject IJSInProcessRuntime JSRuntime
 
-<PageTitle>Streams - Index</PageTitle>
+<PageTitle>Streams - Iterate ReadableStream</PageTitle>
 
-<h2>Reading a Stream</h2>
+<h2>Iterating a ReadableStream</h2>
 On this page we create a <code>MemoryStream</code> of @dataSize bytes in C# and parse that to JavaScript to create a <code>IJSObjectReference</code> for the stream.
 <br />
-From the JS reference we create a <code>ReadableStreamInProcess</code> and gets the <code>ReadableStreamDefaultReader</code> of that.
+From the JS reference we create a <code>ReadableStream</code> and gets the <code>ReadableStreamDefaultReader</code> of that.
 <br />
-Using the reader we read the chunks until there are no more.
+We iterate the <code>ReadableStream</code> using <code>await foreach(var chunk in reader)</code>
 @for (int i = 0; i < chunkSizes.Count; i++)
 {
     <div><b>chunk @i: </b> @chunkSizes[i] bytes</div>
@@ -26,15 +26,13 @@ Using the reader we read the chunks until there are no more.
             using var data = new System.IO.MemoryStream(new byte[dataSize]);
             using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
             var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-            var readableStream = await Streams.ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
-            var readableStreamReader = readableStream.GetDefaultReader();
-            var read = await readableStreamReader.ReadAsync();
-            while (!read.Done)
+            var readableStream = Streams.ReadableStream.Create(JSRuntime, jSStreamReference);
+            var reader = await readableStream.GetDefaultReaderAsync();
+            await foreach(var chunk in reader)
             {
-                var length = await JSRuntime.InvokeAsync<int>("getAttribute", read.Value, "length");
+                var length = await JSRuntime.InvokeAsync<int>("getAttribute", chunk, "length");
                 chunkSizes.Add(length);
                 await Task.Delay(100);
-                read = await readableStreamReader.ReadAsync();
                 StateHasChanged();
             }
         }
