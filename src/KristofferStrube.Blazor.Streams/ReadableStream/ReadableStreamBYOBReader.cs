@@ -8,6 +8,17 @@ namespace KristofferStrube.Blazor.Streams;
 public class ReadableStreamBYOBReader : ReadableStreamReader
 {
     /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamBYOBReader"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
+    public static ReadableStreamBYOBReader Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return new ReadableStreamBYOBReader(jSRuntime, jSReference);
+    }
+
+    /// <summary>
     /// Constructs a <see cref="ReadableStreamDefaultReader"/> from some <see cref="ReadableStream"/>.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>

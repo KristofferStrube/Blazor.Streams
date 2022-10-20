@@ -42,7 +42,7 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
             data.Position = 0;
             using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
             var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-            var readableStream = Streams.ReadableStream.Create(JSRuntime, jSStreamReference);
+            var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
             var reader = await readableStream.GetDefaultReaderAsync();
             await foreach (string chunk in reader.IterateStrings())
             {

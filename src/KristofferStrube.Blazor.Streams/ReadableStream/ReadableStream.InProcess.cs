@@ -55,15 +55,6 @@ public class ReadableStreamInProcess : ReadableStream
     public bool Locked => inProcessHelper.Invoke<bool>("getAttribute", JSReference, "locked");
 
     /// <summary>
-    /// Closes the internal reader if it is locked.
-    /// </summary>
-    /// <returns></returns>
-    public void Cancel()
-    {
-        JSReference.InvokeVoid("cancel");
-    }
-
-    /// <summary>
     /// Creates a new <see cref="ReadableStreamReader"/> that it assigns to the internal <c>reader</c> slot and returns that.
     /// </summary>
     /// <param name="options">Options that can be used to indicate that a <see cref="ReadableStreamBYOBReader"/> should be created.</param>

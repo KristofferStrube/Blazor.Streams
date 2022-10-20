@@ -8,6 +8,18 @@ namespace KristofferStrube.Blazor.Streams;
 public class ReadableStreamDefaultReaderInProcess : ReadableStreamReaderInProcess
 {
     /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamDefaultReader"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStreamDefaultReaderInProcess"/>.</returns>
+    public static async Task<ReadableStreamDefaultReaderInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
+    {
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcesshelper, jSReference);
+    }
+
+    /// <summary>
     /// Constructs a <see cref="ReadableStreamDefaultReaderInProcess"/> from some <see cref="ReadableStream"/>.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>

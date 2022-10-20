@@ -26,7 +26,7 @@ We iterate the <code>ReadableStream</code> using <code>await foreach(var chunk i
             using var data = new System.IO.MemoryStream(new byte[dataSize]);
             using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
             var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-            var readableStream = Streams.ReadableStream.Create(JSRuntime, jSStreamReference);
+            var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
             var reader = await readableStream.GetDefaultReaderAsync();
             await foreach(var chunk in reader)
             {

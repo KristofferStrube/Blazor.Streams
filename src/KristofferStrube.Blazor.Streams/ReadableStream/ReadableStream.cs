@@ -3,7 +3,7 @@
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
-/// <see href="https://streams.spec.whatwg.org/#rs">Streams browser specs</see>
+/// <see href="https://streams.spec.whatwg.org/#rs-class-definition">Streams browser specs</see>
 /// </summary>
 public class ReadableStream : IAsyncDisposable
 {
@@ -16,6 +16,7 @@ public class ReadableStream : IAsyncDisposable
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStream"/>.</param>
+    /// <returns>A wrapper instance for a ReadableStream.</returns>
     public static ReadableStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new ReadableStream(jSRuntime, jSReference);
@@ -58,7 +59,7 @@ public class ReadableStream : IAsyncDisposable
     }
 
     /// <summary>
-    /// Closes the internal reader if it is locked.
+    /// Closes the internal reader if it is not locked.
     /// </summary>
     /// <returns></returns>
     public async Task CancelAsync()

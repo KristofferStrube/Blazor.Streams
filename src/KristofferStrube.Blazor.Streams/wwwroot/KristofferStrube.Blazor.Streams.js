@@ -12,6 +12,14 @@ export function constructReadableStreamBYOBReader(stream) {
     return new ReadableStreamBYOBReader(stream);
 }
 
+export function constructWritableStream(underlyingSource, strategy) {
+    return new WritableStream(underlyingSource, strategy);
+}
+
+export function constructWritableStreamDefaultReader(stream) {
+    return new WritableStreamDefaultReader(stream);
+}
+
 export function constructByteArray(size) {
     return new Uint8Array(size);
 }
