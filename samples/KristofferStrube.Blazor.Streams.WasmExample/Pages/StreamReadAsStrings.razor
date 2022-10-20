@@ -14,7 +14,6 @@ We iterate the reader using <code>await foreach (string chunk in reader.IterateS
 
 
 @code {
-    private readonly System.Text.Encoding encoding = System.Text.Encoding.Unicode;
     private string result = "";
     private int dataSize = 0;
     private string loremIpsum = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis id nulla orci. Donec id tellus sagittis, suscipit turpis ac, efficitur magna. Phasellus sit amet rutrum nisl, ut tristique enim. Integer nec purus nec enim blandit laoreet. Cras maximus luctus interdum. Phasellus pellentesque tristique neque imperdiet tincidunt. Pellentesque bibendum tristique ipsum at fringilla. In ornare in dolor sit amet pellentesque. Maecenas fermentum mi purus, vitae malesuada lorem gravida quis. In auctor accumsan mattis.
@@ -29,7 +28,7 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
 
     protected override void OnInitialized()
     {
-        dataSize = encoding.GetBytes(loremIpsum).Length;
+        dataSize = System.Text.Encoding.ASCII.GetBytes(loremIpsum).Length;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -37,7 +36,7 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
         if (firstRender)
         {
             using var data = new System.IO.MemoryStream();
-            using var writer = new StreamWriter(data, encoding);
+            using var writer = new StreamWriter(data);
             writer.Write(loremIpsum);
             writer.Flush();
             data.Position = 0;
@@ -45,7 +44,7 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
             var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
             var readableStream = Streams.ReadableStream.Create(JSRuntime, jSStreamReference);
             var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach (string chunk in reader.IterateStrings(encoding))
+            await foreach (string chunk in reader.IterateStrings())
             {
                 result += chunk;
                 await Task.Delay(100);
