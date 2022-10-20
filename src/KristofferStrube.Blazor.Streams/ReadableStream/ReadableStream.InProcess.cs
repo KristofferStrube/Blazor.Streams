@@ -11,10 +11,10 @@ public class ReadableStreamInProcess : ReadableStream
     private readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a ReadableStream.
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStream"/>.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="jSInstance">An JS reference to an existing ReadableStream.</param>
+    /// <param name="jSInstance">An JS reference to an existing <see cref="ReadableStream"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStreamInProcess"/> which can access attributes synchronously.</returns>
     public static async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSInstance)
     {
@@ -23,7 +23,7 @@ public class ReadableStreamInProcess : ReadableStream
     }
 
     /// <summary>
-    /// Constructs a wrapper instance using the standard constructor
+    /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="underlyingSource">A JS reference to an object equivalent to a <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">JS UnderlyingSource</see>.</param>
@@ -88,5 +88,29 @@ public class ReadableStreamInProcess : ReadableStream
     public ReadableStreamDefaultReaderInProcess GetDefaultReader()
     {
         return (ReadableStreamDefaultReaderInProcess)GetReader();
+    }
+
+    /// <summary>
+    /// Provides a convenient, chainable way of piping this <see cref="ReadableStream"/> through a <see cref="TransformStream"/> or simply a <see cref="ReadableWritablePair"/>.
+    /// </summary>
+    /// <param name="transform">The transformer that is piped through.</param>
+    /// <param name="options">An optional <see cref="StreamPipeOptions"/>.</param>
+    public ReadableStream PipeThrough(ReadableWritablePair transform, StreamPipeOptions? options = null)
+    {
+        IJSObjectReference jSInstance = JSReference.Invoke<IJSObjectReference>("pipeThrough", transform.JSReference, options);
+        return new ReadableStream(jSRuntime, jSInstance);
+    }
+
+    /// <summary>
+    /// Tees this readable stream. Teeing a stream will lock it, preventing any other consumer from acquiring a reader.
+    /// </summary>
+    /// <returns>Two resulting branches as new <see cref="ReadableStream"/> instances.</returns>
+    public (ReadableStream branch1, ReadableStream branch2) Tee()
+    {
+        IJSObjectReference jSArray = JSReference.Invoke<IJSObjectReference>("tee");
+        return (
+            new ReadableStream(jSRuntime, inProcessHelper.Invoke<IJSObjectReference>("elementAt", jSArray, 0)),
+            new ReadableStream(jSRuntime, inProcessHelper.Invoke<IJSObjectReference>("elementAt", jSArray, 1))
+            );
     }
 }

@@ -1,5 +1,9 @@
 export function getAttribute(object, attribute) { return object[attribute]; }
 
+export function setAttribute(object, attribute, value) { return object[attribute] = value; }
+
+export function elementAt(array, index) { return array.at(index); }
+
 export function constructReadableStream(underlyingSource, strategy) {
     return new ReadableStream(underlyingSource, strategy);
 }
@@ -10,6 +14,10 @@ export function constructReadableStreamDefaultReader(stream) {
 
 export function constructReadableStreamBYOBReader(stream) {
     return new ReadableStreamBYOBReader(stream);
+}
+
+export function constructReadableWritablePair(readable, writable) {
+    return { readable: readable, writable: writable };
 }
 
 export function constructWritableStream(underlyingSource, strategy) {
