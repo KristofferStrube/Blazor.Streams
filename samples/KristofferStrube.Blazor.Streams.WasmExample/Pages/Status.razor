@@ -18,14 +18,8 @@
         var lines = webIDL.Replace("<", "&lt;").Split('\n');
         for (int i = 0; i < lines.Count(); i++)
         {
-            if (supportedRows.Any(interval => i >= interval.start && i <= interval.end))
-            {
-                compareLines.Add($"""<span style="background-color:lightgreen;display:block;min-height:21px;">{lines[i]}</span>""");
-            }
-            else
-            {
-                compareLines.Add($"""<span style="background-color:pink;display:block;min-height:21px;">{lines[i]}</span>""");
-            }
+            var color = supportedRows.Any(interval => i >= interval.start && i <= interval.end) ? "lightgreen" : "pink";
+            compareLines.Add($"""<span style="background-color:{color};display:block;min-height:21px;">{lines[i]}</span>""");
         }
 
         compareText = string.Join("", compareLines);
