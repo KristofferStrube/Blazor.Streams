@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.JSInterop;
+using System.Text.Json.Serialization;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -7,9 +8,19 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class QueingStrategy
 {
+    public QueingStrategy()
+    {
+        ObjRef = DotNetObjectReference.Create(this);
+    }
+
+    public DotNetObjectReference<QueingStrategy> ObjRef { get; set; }
+
     [JsonPropertyName("highWaterMark")]
     public double HighWaterMark { get; set; }
 
-    [JsonPropertyName("size")]
-    public double Size { get; set; }
+    [JsonIgnore]
+    public Func<IJSObjectReference, double>? Size { get; set; }
+
+    [JSInvokable]
+    public double InvokeSize(IJSObjectReference chunk) => Size is null ? 0 : Size.Invoke(chunk);
 }

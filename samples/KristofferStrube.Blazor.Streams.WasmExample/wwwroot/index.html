@@ -44,6 +44,10 @@
     <script>
         function jSStreamReference(streamRef) { return streamRef.stream(); }
         function getAttribute(object, attribute) { return object[attribute]; }
+        function byteArray(object) {
+            var bytes = new Uint8Array(object);
+            return bytes;
+        }
     </script>
 
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />

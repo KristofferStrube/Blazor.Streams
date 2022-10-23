@@ -7,6 +7,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class ReadableStreamGetReaderOptions
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyName("mode")]
     public ReadableStreamReaderMode Mode { get; set; }
 }

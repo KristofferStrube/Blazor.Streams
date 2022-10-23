@@ -1,0 +1,36 @@
+﻿@page "/CreateReadableStream"
+@inject IJSInProcessRuntime JSRuntime
+
+<PageTitle>Streams - Index</PageTitle>
+
+<h2>Creating a ReadableStream</h2>
+We can create a new instance of a <code>ReadableStream</code> that can generate or read some datasource.
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSourceTasks(JSRuntime)
+                {
+                    Pull = async (controller) =>
+                    {
+                        var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[] { 0, 1, 0, 1, 0, 1 });
+                        await ((ReadableStreamDefaultController)controller).EnqueueAsync(byteArray);
+                    },
+                    AutoAllocateChunkSize = 4
+
+                }, new QueingStrategy()
+                {
+                    HighWaterMark = 4,
+                    Size = _ => 4,
+                });
+            var reader = await readableStream.GetDefaultReaderAsync();
+            await foreach(var chunk in reader.IterateByteArrays())
+            {
+                await Task.Delay(100);
+                Console.WriteLine(chunk.Length);
+            }
+        }
+    }
+}

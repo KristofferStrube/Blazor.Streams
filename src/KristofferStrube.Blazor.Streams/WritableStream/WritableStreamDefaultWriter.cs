@@ -53,7 +53,7 @@ public class WritableStreamDefaultWriter : IAsyncDisposable
     /// <returns></returns>
     public async Task<IJSObjectReference> GetClosedAsync()
     {
-        var helper = await helperTask.Value;
+        IJSObjectReference helper = await helperTask.Value;
         return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "closed");
     }
 
@@ -63,7 +63,7 @@ public class WritableStreamDefaultWriter : IAsyncDisposable
     /// <returns>It will be null if the stream cannot be successfully written to (due to either being errored, or having an abort queued up). It will return zero if the stream is closed.</returns>
     public async Task<double?> GetDesiredSizeAsync()
     {
-        var helper = await helperTask.Value;
+        IJSObjectReference helper = await helperTask.Value;
         return await helper.InvokeAsync<double?>("getAttribute", JSReference, "desiredSize");
     }
 
@@ -73,7 +73,7 @@ public class WritableStreamDefaultWriter : IAsyncDisposable
     /// <returns></returns>
     public async Task<IJSObjectReference> GetReadyAsync()
     {
-        var helper = await helperTask.Value;
+        IJSObjectReference helper = await helperTask.Value;
         return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "ready");
     }
 

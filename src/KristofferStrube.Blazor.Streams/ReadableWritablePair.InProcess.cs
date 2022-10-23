@@ -50,25 +50,19 @@ public class ReadableWritablePairInProcess : ReadableWritablePair
     {
         get
         {
-            var jSInstance = inProcessHelper.Invoke<IJSObjectReference>("getAttribute", JSReference, "readable");
+            IJSObjectReference jSInstance = inProcessHelper.Invoke<IJSObjectReference>("getAttribute", JSReference, "readable");
             return new ReadableStream(jSRuntime, jSInstance);
         }
-        set
-        {
-            inProcessHelper.InvokeVoid("setAttribute", JSReference, "readable", value.JSReference);
-        }
+        set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "readable", value.JSReference);
     }
 
     public WritableStream Writable
     {
         get
         {
-            var jSInstance = inProcessHelper.Invoke<IJSObjectReference>("getAttribute", JSReference, "writable");
+            IJSObjectReference jSInstance = inProcessHelper.Invoke<IJSObjectReference>("getAttribute", JSReference, "writable");
             return new WritableStream(jSRuntime, jSInstance);
         }
-        set
-        {
-            inProcessHelper.InvokeVoid("setAttribute", JSReference, "writable", value.JSReference);
-        }
+        set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "writable", value.JSReference);
     }
 }

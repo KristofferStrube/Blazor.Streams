@@ -48,15 +48,15 @@ public class ReadableWritablePair : IAsyncDisposable
 
     public async Task<ReadableStream> GetReadableAsync()
     {
-        var helper = await helperTask.Value;
-        var jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "readable");
+        IJSObjectReference helper = await helperTask.Value;
+        IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "readable");
         return new ReadableStream(jSRuntime, jSInstance);
     }
 
     public async Task<WritableStream> GetWritableAsync()
     {
-        var helper = await helperTask.Value;
-        var jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "writable");
+        IJSObjectReference helper = await helperTask.Value;
+        IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "writable");
         return new WritableStream(jSRuntime, jSInstance);
     }
 

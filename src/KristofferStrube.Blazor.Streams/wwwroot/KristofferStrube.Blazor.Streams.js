@@ -5,7 +5,33 @@ export function setAttribute(object, attribute, value) { return object[attribute
 export function elementAt(array, index) { return array.at(index); }
 
 export function constructReadableStream(underlyingSource, strategy) {
-    return new ReadableStream(underlyingSource, strategy);
+    if (underlyingSource == null) {
+        if (strategy == null) {
+            return new ReadableStream();
+        }
+        return new ReadableStream(null, {
+            highWaterMark: strategy.highWaterMark,
+            size: (chunk) => strategy.objRef.invokeMethod('InvokeSize', DotNet.createJSObjectReference(chunk))
+        });
+    }
+    var source = {
+        start(controller) {
+            underlyingSource.objRef.invokeMethodAsync('InvokeStart', DotNet.createJSObjectReference(controller));
+        },
+        pull(controller) {
+            underlyingSource.objRef.invokeMethodAsync('InvokePull', DotNet.createJSObjectReference(controller));
+        },
+        cancel(controller) {
+            underlyingSource.objRef.invokeMethodAsync('InvokeCancel', DotNet.createJSObjectReference(controller));
+        },
+    };
+    if (strategy == null) {
+        return new ReadableStream(source);
+    }
+    return new ReadableStream(source, {
+        highWaterMark: strategy.highWaterMark,
+        size: (chunk) => strategy.objRef.invokeMethod('InvokeSize', DotNet.createJSObjectReference(chunk))
+    });
 }
 
 export function constructReadableStreamDefaultReader(stream) {

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -30,7 +29,21 @@ public class ReadableStream : IAsyncDisposable
     /// <param name="underlyingSource">A JS reference to an object equivalent to a <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">JS UnderlyingSource</see>.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
-    public static async Task<ReadableStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference? underlyingSource = null, QueingStrategy? strategy = null)
+    public static async Task<ReadableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSource? underlyingSource = null, QueingStrategy? strategy = null)
+    {
+        IJSObjectReference helper = await jSRuntime.GetHelperAsync();
+        IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructReadableStream", underlyingSource, strategy);
+        return new ReadableStream(jSRuntime, jSInstance);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor.
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSource">A JS reference to an object equivalent to a <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">JS UnderlyingSource</see>.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    public static async Task<ReadableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSourceTasks? underlyingSource = null, QueingStrategy? strategy = null)
     {
         IJSObjectReference helper = await jSRuntime.GetHelperAsync();
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructReadableStream", underlyingSource, strategy);
