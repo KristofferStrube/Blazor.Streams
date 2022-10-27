@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using System.Runtime.CompilerServices;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -63,7 +64,7 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     /// </summary>
     /// <param name="cancellationToken">A cancellation token for breaking the enumeration.</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<byte[]> IterateByteArrays(CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<byte[]> IterateByteArrays([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         IJSObjectReference helper = await helperTask.Value;
         ReadableStreamReadResult read = await ReadAsync();
@@ -81,12 +82,9 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     /// <param name="cancellationToken">A cancellation token for breaking the enumeration.</param>
     /// <param name="encoding">A cancellation token for breaking the enumeration.</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<string> IterateStrings(System.Text.Encoding? encoding = null, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<string> IterateStrings(System.Text.Encoding? encoding = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        if (encoding is null)
-        {
-            encoding = System.Text.Encoding.ASCII;
-        }
+        encoding ??= System.Text.Encoding.ASCII;
         IJSObjectReference helper = await helperTask.Value;
         ReadableStreamReadResult read = await ReadAsync();
         while (!await read.GetDoneAsync() && !cancellationToken.IsCancellationRequested)

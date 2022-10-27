@@ -4,32 +4,53 @@
 <PageTitle>Streams - Index</PageTitle>
 
 <h2>Creating a ReadableStream</h2>
-We can create a new instance of a <code>ReadableStream</code> that can generate or read some datasource.
+We can create a new instance of a <code>ReadableStream</code> that can generate a byte array which when the <code>ReadableStream</code> is started inserts 20 1´s and after that generates 0´s equvalent to the desired amount but where it takes 100 miliseconds to generate the required amount.
+The for-loop that consumes the <code>ReadableStream</code> also limits its consumption by only requesitng a chunk every 100 milisecond.
+
+@for (int i = 0; i < chunks.Count; i++)
+{
+    <div><b>chunk @i: </b> @chunks[i]</div>
+}
 
 @code {
+    private List<string> chunks = new();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSourceTasks(JSRuntime)
                 {
-                    Pull = async (controller) =>
+                    Start = async (controller) =>
                     {
-                        var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[] { 0, 1, 0, 1, 0, 1 });
+                        var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, 20).Select(_ => (byte)1).ToArray());
                         await ((ReadableStreamDefaultController)controller).EnqueueAsync(byteArray);
                     },
-                    AutoAllocateChunkSize = 4
+                    Pull = async (controller) =>
+                    {
+                        await Task.Delay(100);
+                        var size = await controller.GetDesiredSizeAsync();
+                        if (size is > 0)
+                        {
+                            var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, (int)size).Select(_=>(byte)0).ToArray());
+                            await ((ReadableStreamDefaultController)controller).EnqueueAsync(byteArray);
+                        }
+                    }
 
                 }, new QueingStrategy()
                 {
-                    HighWaterMark = 4,
-                    Size = _ => 4,
+                    HighWaterMark = 50,
+                    Size = _ => 10,
                 });
             var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach(var chunk in reader.IterateByteArrays())
+            await foreach (var chunk in reader.IterateByteArrays())
             {
-                await Task.Delay(100);
-                Console.WriteLine(chunk.Length);
+                if (chunk is not null)
+                {
+                    await Task.Delay(100);
+                    chunks.Add(string.Join("", chunk.Select(b => b.ToString())));
+                    StateHasChanged();
+                }
             }
         }
     }
