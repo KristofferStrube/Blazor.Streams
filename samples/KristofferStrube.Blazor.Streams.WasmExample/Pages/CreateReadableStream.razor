@@ -4,7 +4,7 @@
 <PageTitle>Streams - Index</PageTitle>
 
 <h2>Creating a ReadableStream</h2>
-We can create a new instance of a <code>ReadableStream</code> that can generate a byte array which when the <code>ReadableStream</code> is started inserts 20 1´s and after that generates 0´s equvalent to the desired amount but where it takes 100 miliseconds to generate the required amount.
+We can create a new instance of a <code>ReadableStream</code> that can generate a byte array which when the <code>ReadableStream</code> is started inserts 20 1´s and after that generates 0´s equvalent to the desired amount but where it takes 100 miliseconds to generate each.
 The for-loop that consumes the <code>ReadableStream</code> also limits its consumption by only requesitng a chunk every 100 milisecond.
 
 @for (int i = 0; i < chunks.Count; i++)

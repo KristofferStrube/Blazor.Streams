@@ -5,23 +5,14 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-readablestreamreadresult">Streams browser specs</see>
 /// </summary>
-public class ReadableStreamReadResult
+public class ReadableStreamReadResult : BaseJSWrapper
 {
-    public readonly IJSObjectReference JSReference;
-    protected readonly Lazy<Task<IJSObjectReference>> helperTask;
-    private readonly IJSRuntime jSRuntime;
-
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamReadResult"/>.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamReadResult"/>.</param>
-    internal ReadableStreamReadResult(IJSRuntime jSRuntime, IJSObjectReference jSReference)
-    {
-        helperTask = new(() => jSRuntime.GetHelperAsync());
-        JSReference = jSReference;
-        this.jSRuntime = jSRuntime;
-    }
+    internal ReadableStreamReadResult(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// A JS Reference to a chunk of data.
