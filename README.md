@@ -17,7 +17,7 @@ The sample project can be demoed at https://kristofferstrube.github.io/Blazor.St
 
 On each page you can find the corresponding code for the example in the top right corner.
 
-On the *API Coverage Status* page you can get an overview over what parts of the API we support currently
+On the *API Coverage Status* page you can get an overview over what parts of the API we support currently.
 
 # Getting Started
 The package can be used in Blazor projects.
