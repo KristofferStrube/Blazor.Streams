@@ -14,29 +14,25 @@ Using the reader we read the chunks until there are no more.
     <div><b>chunk @i size: </b> @chunkSizes[i] bytes</div>
 }
 
-
 @code {
     private List<int> chunkSizes = new();
     private int dataSize = 1000 * 1024;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        using var data = new System.IO.MemoryStream(new byte[dataSize]);
+        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        var readableStream = await ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
+        var readableStreamReader = readableStream.GetDefaultReader();
+        var read = await readableStreamReader.ReadAsync();
+        while (!read.Done)
         {
-            using var data = new System.IO.MemoryStream(new byte[dataSize]);
-            using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
-            var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-            var readableStream = await ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
-            var readableStreamReader = readableStream.GetDefaultReader();
-            var read = await readableStreamReader.ReadAsync();
-            while (!read.Done)
-            {
-                var length = await JSRuntime.InvokeAsync<int>("getAttribute", read.Value, "length");
-                chunkSizes.Add(length);
-                await Task.Delay(100);
-                read = await readableStreamReader.ReadAsync();
-                StateHasChanged();
-            }
+            var length = await JSRuntime.InvokeAsync<int>("getAttribute", read.Value, "length");
+            chunkSizes.Add(length);
+            await Task.Delay(100);
+            read = await readableStreamReader.ReadAsync();
+            StateHasChanged();
         }
     }
 }

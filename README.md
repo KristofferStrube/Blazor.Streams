@@ -40,13 +40,34 @@ You need to reference the package in order to use it in your pages. This can be 
 ## Creating wrapper instance
 We can call the constructor for `ReadableStream`, `WritableStream`, or `TransformStream` from C# and work on these objects like so:
 ```razor
-**TODO: Sample of use**
-```
+@inject IJSInProcessRuntime JSRuntime
 
-# Nomenclature
-## ReadableStream
-## WritableStream
-## TransformStream
+@code {
+    private List<int> chunkSizes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Construct a stream in .NET.
+        using var data = new System.IO.MemoryStream(new byte[1000 * 1024]);
+        
+        // Convert a .NET Stream to a JS ReadableStream.
+        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        
+        // Create a wrapper instance of the ReadableStream.
+        var readableStream = await ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
+
+        // Get the reader and iterate that.
+        var readableStreamReader = readableStream.GetDefaultReader();
+        await foreach (var chunk in reader)
+        {
+            var length = await JSRuntime.InvokeAsync<int>("getAttribute", chunk, "length");
+            Console.WriteLine(length);
+            await Task.Delay(100);
+        }
+    }
+}
+```
 
 # Issues
 Feel free to open issues on the repository if you find any errors with the package or have wishes for features.

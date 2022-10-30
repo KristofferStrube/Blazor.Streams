@@ -32,25 +32,22 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
         dataSize = encoding.GetBytes(loremIpsum).Length;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        using var data = new System.IO.MemoryStream();
+        using var writer = new StreamWriter(data, encoding);
+        writer.Write(loremIpsum);
+        writer.Flush();
+        data.Position = 0;
+        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
+        var reader = await readableStream.GetDefaultReaderAsync();
+        await foreach (string chunk in reader.IterateStringsAsync(encoding))
         {
-            using var data = new System.IO.MemoryStream();
-            using var writer = new StreamWriter(data, encoding);
-            writer.Write(loremIpsum);
-            writer.Flush();
-            data.Position = 0;
-            using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
-            var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-            var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
-            var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach (string chunk in reader.IterateStringsAsync(encoding))
-            {
-                result += chunk;
-                await Task.Delay(100);
-                StateHasChanged();
-            }
+            result += chunk;
+            await Task.Delay(100);
+            StateHasChanged();
         }
     }
 }

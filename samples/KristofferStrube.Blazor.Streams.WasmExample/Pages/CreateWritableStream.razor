@@ -14,29 +14,26 @@ We can create a new instance of a <code>WritableStream</code> which can receive 
 @code {
     private List<ulong> chunkSizes = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            var writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
-                {
-                    Write = async (chunk, controller) =>
-                    {
-                        var length = await JSRuntime.InvokeAsync<ulong>("getAttribute", chunk, "length");
-                        chunkSizes.Add(length);
-                        StateHasChanged();
-                    }
-                }, await ByteLengthQueuingStrategy.CreateAsync(JSRuntime, new QueuingStrategyInit(20)));
-
-            var writer = await writableStream.GetWriterAsync();
-            for (int i = 0; i < 10; i++)
+        var writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
             {
-                await Task.Delay(100);
-                var size = await writer.GetDesiredSizeAsync();
-                var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[(int)size]);
-                await writer.WriteAsync(byteArray);
-            }
-            await writer.CloseAsync();
+                Write = async (chunk, controller) =>
+                {
+                    var length = await JSRuntime.InvokeAsync<ulong>("getAttribute", chunk, "length");
+                    chunkSizes.Add(length);
+                    StateHasChanged();
+                }
+            }, await ByteLengthQueuingStrategy.CreateAsync(JSRuntime, new QueuingStrategyInit(20)));
+
+        var writer = await writableStream.GetWriterAsync();
+        for (int i = 0; i < 10; i++)
+        {
+            await Task.Delay(100);
+            var size = await writer.GetDesiredSizeAsync();
+            var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[(int)size]);
+            await writer.WriteAsync(byteArray);
         }
+        await writer.CloseAsync();
     }
 }

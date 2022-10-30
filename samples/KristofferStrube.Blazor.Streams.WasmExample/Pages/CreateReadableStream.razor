@@ -15,43 +15,40 @@ The for-loop that consumes the <code>ReadableStream</code> also limits its consu
 @code {
     private List<string> chunks = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSource(JSRuntime)
-                {
-                    Start = async (ctr) =>
-                        {
-                            var controller = ((ReadableStreamDefaultController)ctr);
-                            var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, 20).Select(_ => (byte)1).ToArray());
-                            await controller.EnqueueAsync(byteArray);
-                        },
-                    Pull = async (ctr) =>
-                        {
-                            var controller = ((ReadableStreamDefaultController)ctr);
-                            await Task.Delay(100);
-                            var size = await controller.GetDesiredSizeAsync();
-                            if (size is > 0)
-                            {
-                                var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[(int)size]);
-                                await controller.EnqueueAsync(byteArray);
-                            }
-                        }
-                }, new QueuingStrategy()
-                {
-                    HighWaterMark = 50,
-                    Size = _ => 10,
-                });
-            var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach (var chunk in reader.IterateByteArraysAsync())
+        var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSource(JSRuntime)
             {
-                if (chunk is not null)
-                {
-                    await Task.Delay(100);
-                    chunks.Add(string.Join("", chunk.Select(b => b.ToString())));
-                    StateHasChanged();
-                }
+                Start = async (ctr) =>
+                    {
+                        var controller = ((ReadableStreamDefaultController)ctr);
+                        var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, 20).Select(_ => (byte)1).ToArray());
+                        await controller.EnqueueAsync(byteArray);
+                    },
+                Pull = async (ctr) =>
+                    {
+                        var controller = ((ReadableStreamDefaultController)ctr);
+                        await Task.Delay(100);
+                        var size = await controller.GetDesiredSizeAsync();
+                        if (size is > 0)
+                        {
+                            var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[(int)size]);
+                            await controller.EnqueueAsync(byteArray);
+                        }
+                    }
+            }, new QueuingStrategy()
+            {
+                HighWaterMark = 50,
+                Size = _ => 10,
+            });
+        var reader = await readableStream.GetDefaultReaderAsync();
+        await foreach (var chunk in reader.IterateByteArraysAsync())
+        {
+            if (chunk is not null)
+            {
+                await Task.Delay(100);
+                chunks.Add(string.Join("", chunk.Select(b => b.ToString())));
+                StateHasChanged();
             }
         }
     }

@@ -19,21 +19,18 @@ We iterate the reader using <code>await foreach (byte[] chunk in reader.IterateB
     private List<int> chunkSizes = new();
     private int dataSize = 1000 * 1024;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        using var data = new System.IO.MemoryStream(new byte[dataSize]);
+        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
+        var reader = await readableStream.GetDefaultReaderAsync();
+        await foreach (byte[] chunk in reader.IterateByteArraysAsync())
         {
-            using var data = new System.IO.MemoryStream(new byte[dataSize]);
-            using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
-            var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-            var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
-            var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach (byte[] chunk in reader.IterateByteArraysAsync())
-            {
-                chunkSizes.Add(chunk.Length);
-                await Task.Delay(100);
-                StateHasChanged();
-            }
+            chunkSizes.Add(chunk.Length);
+            await Task.Delay(100);
+            StateHasChanged();
         }
     }
 }
