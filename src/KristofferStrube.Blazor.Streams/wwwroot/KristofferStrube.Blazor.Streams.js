@@ -9,10 +9,7 @@ export function constructReadableStream(underlyingSource, strategy) {
         if (strategy == null) {
             return new ReadableStream();
         }
-        return new ReadableStream(null, {
-            highWaterMark: strategy.highWaterMark,
-            size: (chunk) => strategy.objRef.invokeMethod('InvokeSize', DotNet.createJSObjectReference(chunk))
-        });
+        return new ReadableStream(null, queueingStrategy(strategy));
     }
     var source = {
         start(controller) {
@@ -21,17 +18,14 @@ export function constructReadableStream(underlyingSource, strategy) {
         pull(controller) {
             underlyingSource.objRef.invokeMethodAsync('InvokePull', DotNet.createJSObjectReference(controller));
         },
-        cancel(controller) {
-            underlyingSource.objRef.invokeMethodAsync('InvokeCancel', DotNet.createJSObjectReference(controller));
+        cancel() {
+            underlyingSource.objRef.invokeMethodAsync('InvokeCancel');
         },
     };
     if (strategy == null) {
         return new ReadableStream(source);
     }
-    return new ReadableStream(source, {
-        highWaterMark: strategy.highWaterMark,
-        size: (chunk) => strategy.objRef.invokeMethod('InvokeSize', DotNet.createJSObjectReference(chunk))
-    });
+    return new ReadableStream(source, queueingStrategy(strategy));
 }
 
 export function constructReadableStreamDefaultReader(stream) {
@@ -46,12 +40,50 @@ export function constructReadableWritablePair(readable, writable) {
     return { readable: readable, writable: writable };
 }
 
-export function constructWritableStream(underlyingSource, strategy) {
-    return new WritableStream(underlyingSource, strategy);
+export function constructWritableStream(underlyingSink, strategy) {
+    if (underlyingSink == null) {
+        return new WritableStream(null, queueingStrategy(strategy));
+    }
+    var sink = {
+        start(controller) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeStart', DotNet.createJSObjectReference(controller));
+        },
+        write(chunk, controller) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeWrite', DotNet.createJSObjectReference(chunk), DotNet.createJSObjectReference(controller));
+        },
+        close() {
+            underlyingSink.objRef.invokeMethodAsync('InvokeClose');
+        },
+        abort() {
+            underlyingSink.objRef.invokeMethodAsync('InvokeAbort');
+        },
+    };
+    return new WritableStream(sink, queueingStrategy(strategy));
+}
+
+function queueingStrategy(strategy) {
+    if (strategy == null) {
+        return {};
+    }
+    if (strategy instanceof ByteLengthQueuingStrategy || strategy instanceof CountQueuingStrategy) {
+        return strategy;
+    }
+    return {
+        highWaterMark: strategy.highWaterMark,
+        size: (chunk) => strategy.objRef.invokeMethod('InvokeSize', DotNet.createJSObjectReference(chunk))
+    };
 }
 
 export function constructWritableStreamDefaultReader(stream) {
     return new WritableStreamDefaultReader(stream);
+}
+
+export function constructByteLengthQueuingStrategy(init) {
+    return new ByteLengthQueuingStrategy(init);
+}
+
+export function constructCountQueuingStrategy(init) {
+    return new CountQueuingStrategy(init);
 }
 
 export function constructByteArray(size) {

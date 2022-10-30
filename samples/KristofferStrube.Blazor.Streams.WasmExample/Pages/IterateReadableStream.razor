@@ -11,7 +11,7 @@ From the JS reference we create a <code>ReadableStream</code> and gets the <code
 We iterate the <code>ReadableStream</code> using <code>await foreach(var chunk in reader)</code>
 @for (int i = 0; i < chunkSizes.Count; i++)
 {
-    <div><b>chunk @i: </b> @chunkSizes[i] bytes</div>
+    <div><b>chunk @i size: </b> @chunkSizes[i] bytes</div>
 }
 
 

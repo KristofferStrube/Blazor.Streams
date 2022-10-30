@@ -12,7 +12,17 @@ public class UnderlyingSource : IDisposable
     protected readonly IJSRuntime jSRuntime;
 
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="UnderlyingSource"/>.
+    /// Constructs a wrapper instance.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <returns>A new <see cref="UnderlyingSource"/> wrapper instance.</returns>
+    public static UnderlyingSource Create(IJSRuntime jSRuntime)
+    {
+        return new UnderlyingSource(jSRuntime);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     public UnderlyingSource(IJSRuntime jSRuntime)
@@ -25,13 +35,13 @@ public class UnderlyingSource : IDisposable
     public DotNetObjectReference<UnderlyingSource> ObjRef { get; init; }
 
     [JsonIgnore]
-    public Action<ReadableStreamController>? Start { get; set; }
+    public Func<ReadableStreamController, Task>? Start { get; set; }
 
     [JsonIgnore]
-    public Action<ReadableStreamController>? Pull { get; set; }
+    public Func<ReadableStreamController, Task>? Pull { get; set; }
 
     [JsonIgnore]
-    public Action? Cancel { get; set; }
+    public Func<Task>? Cancel { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyName("type")]
@@ -41,41 +51,44 @@ public class UnderlyingSource : IDisposable
     public ulong AutoAllocateChunkSize { get; set; }
 
     [JSInvokable]
-    public void InvokeStart(IJSObjectReference controller)
+    public async Task InvokeStart(IJSObjectReference controller)
     {
+        if (Start is null) return;
         if (Type is ReadableStreamType.Bytes)
         {
-            Start?.Invoke(new ReadableByteStreamController(jSRuntime, controller));
+            await Start.Invoke(new ReadableByteStreamController(jSRuntime, controller));
         }
         else
         {
-            Start?.Invoke(new ReadableStreamDefaultController(jSRuntime, controller));
+            await Start.Invoke(new ReadableStreamDefaultController(jSRuntime, controller));
         }
     }
 
     [JSInvokable]
-    public void InvokePull(IJSObjectReference controller)
+    public async Task InvokePull(IJSObjectReference controller)
     {
+        if (Pull is null) return;
         if (Type is ReadableStreamType.Bytes)
         {
-            Pull?.Invoke(new ReadableByteStreamController(jSRuntime, controller));
+            await Pull.Invoke(new ReadableByteStreamController(jSRuntime, controller));
         }
         else
         {
-            Pull?.Invoke(new ReadableStreamDefaultController(jSRuntime, controller));
+            await Pull.Invoke(new ReadableStreamDefaultController(jSRuntime, controller));
         }
     }
 
     [JSInvokable]
-    public void InvokeCancel()
+    public async Task InvokeCancel()
     {
+        if (Cancel is null) return;
         if (Type is ReadableStreamType.Bytes)
         {
-            Cancel?.Invoke();
+            await Cancel.Invoke();
         }
         else
         {
-            Cancel?.Invoke();
+            await Cancel.Invoke();
         }
     }
 

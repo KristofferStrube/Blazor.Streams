@@ -14,17 +14,29 @@ public abstract class ReadableStreamController : BaseJSWrapper
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamController"/>.</param>
     internal ReadableStreamController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
+    /// <summary>
+    /// The desired size to fill the controlled stream's internal queue.
+    /// </summary>
+    /// <returns>Negative values mean that the queue is overfull.</returns>
     public async Task<double?> GetDesiredSizeAsync()
     {
         IJSObjectReference helper = await helperTask.Value;
         return await helper.InvokeAsync<double?>("getAttribute", JSReference, "desiredSize");
     }
 
+    /// <summary>
+    /// Closes the controlled stream once all previously enqueued chunks have been read.
+    /// </summary>
+    /// <returns></returns>
     public async Task CloseAsync()
     {
         await JSReference.InvokeVoidAsync("close");
     }
 
+    /// <summary>
+    /// Errors the controlled stream so that all future interactions will fail.
+    /// </summary>
+    /// <returns></returns>
     public async Task ErrorAsync()
     {
         await JSReference.InvokeVoidAsync("error");

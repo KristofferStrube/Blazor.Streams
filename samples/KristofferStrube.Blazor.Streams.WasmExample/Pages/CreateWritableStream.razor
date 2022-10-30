@@ -1,0 +1,42 @@
+﻿@page "/CreateWritableStream"
+@inject IJSInProcessRuntime JSRuntime
+
+<PageTitle>Streams - Create WritableStream</PageTitle>
+
+<h2>Creating a WritableStream</h2>
+We can create a new instance of a <code>WritableStream</code> which can receive writes and send them somewhere. In our case our <code>WritableStream</code> will write to a list that we display.
+
+@for (int i = 0; i < chunkSizes.Count; i++)
+{
+    <div><b>chunk @i size: </b> @chunkSizes[i]</div>
+}
+
+@code {
+    private List<ulong> chunkSizes = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
+                {
+                    Write = async (chunk, controller) =>
+                    {
+                        var length = await JSRuntime.InvokeAsync<ulong>("getAttribute", chunk, "length");
+                        chunkSizes.Add(length);
+                        StateHasChanged();
+                    }
+                }, await ByteLengthQueuingStrategy.CreateAsync(JSRuntime, new QueuingStrategyInit(20)));
+
+            var writer = await writableStream.GetWriterAsync();
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(100);
+                var size = await writer.GetDesiredSizeAsync();
+                var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[(int)size]);
+                await writer.WriteAsync(byteArray);
+            }
+            await writer.CloseAsync();
+        }
+    }
+}

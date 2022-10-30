@@ -14,6 +14,11 @@ public class ReadableStreamDefaultController : ReadableStreamController
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultController"/>.</param>
     public ReadableStreamDefaultController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
+    /// <summary>
+    /// Enqueues the chunk in the controlled stream.
+    /// </summary>
+    /// <param name="chunk"></param>
+    /// <returns></returns>
     public async Task EnqueueAsync(IJSObjectReference? chunk = null)
     {
         await JSReference.InvokeVoidAsync("enqueue", chunk);

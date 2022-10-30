@@ -45,7 +45,7 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
             var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
             var readableStream = ReadableStream.Create(JSRuntime, jSStreamReference);
             var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach (string chunk in reader.IterateStrings(encoding))
+            await foreach (string chunk in reader.IterateStringsAsync(encoding))
             {
                 result += chunk;
                 await Task.Delay(100);

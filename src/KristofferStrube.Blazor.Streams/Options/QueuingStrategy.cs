@@ -6,14 +6,14 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-queuingstrategy">Streams browser specs</see>
 /// </summary>
-public class QueingStrategy
+public class QueuingStrategy
 {
-    public QueingStrategy()
+    public QueuingStrategy()
     {
         ObjRef = DotNetObjectReference.Create(this);
     }
 
-    public DotNetObjectReference<QueingStrategy> ObjRef { get; set; }
+    public DotNetObjectReference<QueuingStrategy> ObjRef { get; set; }
 
     [JsonPropertyName("highWaterMark")]
     public double HighWaterMark { get; set; }

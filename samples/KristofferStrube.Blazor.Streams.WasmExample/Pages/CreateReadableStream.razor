@@ -1,7 +1,7 @@
 ﻿@page "/CreateReadableStream"
 @inject IJSInProcessRuntime JSRuntime
 
-<PageTitle>Streams - Index</PageTitle>
+<PageTitle>Streams - Create ReadableStream</PageTitle>
 
 <h2>Creating a ReadableStream</h2>
 We can create a new instance of a <code>ReadableStream</code> that can generate a byte array which when the <code>ReadableStream</code> is started inserts 20 1´s and after that generates 0´s equvalent to the desired amount but where it takes 100 miliseconds to generate each.
@@ -19,31 +19,32 @@ The for-loop that consumes the <code>ReadableStream</code> also limits its consu
     {
         if (firstRender)
         {
-            var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSourceTasks(JSRuntime)
+            var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSource(JSRuntime)
                 {
-                    Start = async (controller) =>
-                    {
-                        var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, 20).Select(_ => (byte)1).ToArray());
-                        await ((ReadableStreamDefaultController)controller).EnqueueAsync(byteArray);
-                    },
-                    Pull = async (controller) =>
-                    {
-                        await Task.Delay(100);
-                        var size = await controller.GetDesiredSizeAsync();
-                        if (size is > 0)
+                    Start = async (ctr) =>
                         {
-                            var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, (int)size).Select(_=>(byte)0).ToArray());
-                            await ((ReadableStreamDefaultController)controller).EnqueueAsync(byteArray);
+                            var controller = ((ReadableStreamDefaultController)ctr);
+                            var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", Enumerable.Range(0, 20).Select(_ => (byte)1).ToArray());
+                            await controller.EnqueueAsync(byteArray);
+                        },
+                    Pull = async (ctr) =>
+                        {
+                            var controller = ((ReadableStreamDefaultController)ctr);
+                            await Task.Delay(100);
+                            var size = await controller.GetDesiredSizeAsync();
+                            if (size is > 0)
+                            {
+                                var byteArray = await JSRuntime.InvokeAsync<IJSObjectReference>("byteArray", new byte[(int)size]);
+                                await controller.EnqueueAsync(byteArray);
+                            }
                         }
-                    }
-
-                }, new QueingStrategy()
+                }, new QueuingStrategy()
                 {
                     HighWaterMark = 50,
                     Size = _ => 10,
                 });
             var reader = await readableStream.GetDefaultReaderAsync();
-            await foreach (var chunk in reader.IterateByteArrays())
+            await foreach (var chunk in reader.IterateByteArraysAsync())
             {
                 if (chunk is not null)
                 {

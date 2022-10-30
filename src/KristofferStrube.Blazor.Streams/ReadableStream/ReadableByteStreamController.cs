@@ -3,7 +3,7 @@
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
-/// <see href="https://streams.spec.whatwg.org/#readablestreamdefaultcontroller">Streams browser specs</see>
+/// <see href="https://streams.spec.whatwg.org/#rbs-controller-class">Streams browser specs</see>
 /// </summary>
 public class ReadableByteStreamController : ReadableStreamController
 {
@@ -14,6 +14,10 @@ public class ReadableByteStreamController : ReadableStreamController
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableByteStreamController"/>.</param>
     public ReadableByteStreamController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
+    /// <summary>
+    /// Returns the current BYOB pull request, or null if there isn’t one.
+    /// </summary>
+    /// <returns>A <see cref="ReadableStreamBYOBRequest"/></returns>
     public async Task<ReadableStreamBYOBRequest?> GetBYOBRequestAsync()
     {
         IJSObjectReference helper = await helperTask.Value;
@@ -25,6 +29,11 @@ public class ReadableByteStreamController : ReadableStreamController
         return new ReadableStreamBYOBRequest(jSRuntime, jSInstance);
     }
 
+    /// <summary>
+    /// Enqueues the chunk in the controlled stream.
+    /// </summary>
+    /// <param name="chunk"></param>
+    /// <returns></returns>
     public async Task EnqueueAsync(ArrayBufferView chunk)
     {
         await JSReference.InvokeVoidAsync("enqueue", chunk.JSReference);

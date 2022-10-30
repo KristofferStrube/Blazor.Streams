@@ -26,13 +26,54 @@ public class ReadableStreamInProcess : ReadableStream
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSource">A JS reference to an object equivalent to a <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">JS UnderlyingSource</see>.</param>
+    /// <param name="underlyingSource">An <see cref="UnderlyingSource"/> that which implements the Start, Pull, and/or Cancel methods.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamInProcess"/> which can access attributes synchronously.</returns>
-    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference? underlyingSource = null, QueingStrategy? strategy = null)
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSource? underlyingSource = null, QueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSource, strategy);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor.
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSource">An <see cref="UnderlyingSource"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSource? underlyingSource = null, ByteLengthQueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSource, strategy?.JSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor.
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSource">An <see cref="UnderlyingSourceInProcess"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSourceInProcess? underlyingSource = null, QueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSource, strategy);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor.
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSource">An <see cref="UnderlyingSourceInProcess"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSourceInProcess? underlyingSource = null, ByteLengthQueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSource, strategy?.JSReference);
+    }
+
+    private static async Task<ReadableStreamInProcess> CreatePrivateAsync(IJSRuntime jSRuntime, object? underlyingSource = null, object? strategy = null)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableStream", underlyingSource, strategy);
+        IJSInProcessObjectReference jSInstance = await inProcesshelper.InvokeAsync<IJSInProcessObjectReference>("constructReadableStream", underlyingSource, strategy);
         return new ReadableStreamInProcess(jSRuntime, inProcesshelper, jSInstance);
     }
 
@@ -59,7 +100,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// </summary>
     /// <param name="options">Options that can be used to indicate that a <see cref="ReadableStreamBYOBReader"/> should be created.</param>
     /// <returns>If <paramref name="options"/> is <see langword="not"/> <see langword="null"/> and the <see cref="ReadableStreamGetReaderOptions.Mode"/> is <see cref="ReadableStreamReaderMode.Byob"/> it returns a <see cref="ReadableStreamBYOBReaderInProcess"/> else it returns a <see cref="ReadableStreamDefaultReaderInProcess"/>.</returns>
-    public ReadableStreamReaderInProcess GetReader(ReadableStreamGetReaderOptions? options = null)
+    public ReadableStreamReader GetReader(ReadableStreamGetReaderOptions? options = null)
     {
         IJSInProcessObjectReference jSInstance = JSReference.Invoke<IJSInProcessObjectReference>("getReader", options);
         if (options?.Mode is ReadableStreamReaderMode.Byob)

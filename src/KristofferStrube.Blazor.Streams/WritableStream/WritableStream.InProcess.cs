@@ -26,13 +26,54 @@ public class WritableStreamInProcess : WritableStream
     /// Constructs a wrapper instance using the standard constructor
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSource">A JS reference to an object equivalent to a <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">JS UnderlyingSource</see>.</param>
+    /// <param name="underlyingSink">An <see cref="UnderlyingSink"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a WritableStream.</returns>
-    public static new async Task<WritableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference? underlyingSource = null, QueingStrategy? strategy = null)
+    public static new async Task<WritableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSink? underlyingSink = null, QueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSink">An <see cref="UnderlyingSink"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a WritableStream.</returns>
+    public static new async Task<WritableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSink? underlyingSink = null, ByteLengthQueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy?.JSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSink">An <see cref="UnderlyingSinkInProcess"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a WritableStream.</returns>
+    public static new async Task<WritableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSinkInProcess? underlyingSink = null, QueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance using the standard constructor
+    /// </summary>
+    /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="underlyingSink">An <see cref="UnderlyingSinkInProcess"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
+    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
+    /// <returns>A wrapper instance for a WritableStream.</returns>
+    public static new async Task<WritableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSinkInProcess? underlyingSink = null, ByteLengthQueuingStrategy? strategy = null)
+    {
+        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy?.JSReference);
+    }
+
+    private static async Task<WritableStreamInProcess> CreatePrivateAsync(IJSRuntime jSRuntime, object? underlyingSink = null, object? strategy = null)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
-        IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("constructWritableStream", underlyingSource, strategy);
+        IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("constructWritableStream", underlyingSink, strategy);
         return new WritableStreamInProcess(jSRuntime, inProcessHelper, jSInstance);
     }
 

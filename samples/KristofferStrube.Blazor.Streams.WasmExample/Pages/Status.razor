@@ -1,7 +1,5 @@
 ﻿@page "/Status"
 
-@using HtmlAgilityPack;
-
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
 
@@ -26,7 +24,7 @@
         StateHasChanged();
     }
 
-    private (int start, int end)[] supportedRows = new (int start, int end)[] { (0, 21), (27, 35), (37, 120), (135, 147), (186, 191) };
+    private (int start, int end)[] supportedRows = new (int start, int end)[] { (0, 22), (26, 35), (37, 153), (186, 211) };
 
     private const string webIDL = @"[Exposed=*, Transferable]
 interface ReadableStream {
