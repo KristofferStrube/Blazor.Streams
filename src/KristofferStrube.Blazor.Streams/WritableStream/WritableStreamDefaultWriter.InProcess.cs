@@ -15,7 +15,7 @@ public class WritableStreamDefaultWriterInProcess : WritableStreamDefaultWriter
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriter"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultWriterInProcess"/>.</returns>
+    /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultWriter"/>.</returns>
     public static async Task<WritableStreamDefaultWriterInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
@@ -27,7 +27,7 @@ public class WritableStreamDefaultWriterInProcess : WritableStreamDefaultWriter
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="stream">A <see cref="WritableStream"/> wrapper instance.</param>
-    /// <returns></returns>
+    /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultWriter"/>.</returns>
     public static new async Task<WritableStreamDefaultWriterInProcess> CreateAsync(IJSRuntime jSRuntime, WritableStream stream)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();

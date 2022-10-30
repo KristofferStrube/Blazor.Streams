@@ -6,19 +6,18 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">Streams browser specs</see>
 /// </summary>
-public class UnderlyingSinkInProcess : IDisposable
+public class UnderlyingSinkInProcess : UnderlyingSink
 {
-    protected readonly IJSRuntime jSRuntime;
     private readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <returns>A new <see cref="UnderlyingSinkInProcess"/> wrapper instance.</returns>
+    /// <returns>A new wrapper instance for a <see cref="UnderlyingSinkInProcess"/>.</returns>
     public static async Task<UnderlyingSinkInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
-        var inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new UnderlyingSinkInProcess(jSRuntime, inProcessHelper);
     }
 
@@ -26,63 +25,71 @@ public class UnderlyingSinkInProcess : IDisposable
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    internal UnderlyingSinkInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper)
+    internal UnderlyingSinkInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper) : base(jSRuntime)
     {
-        this.jSRuntime = jSRuntime;
         this.inProcessHelper = inProcessHelper;
         ObjRef = DotNetObjectReference.Create(this);
     }
 
-    public DotNetObjectReference<UnderlyingSinkInProcess> ObjRef { get; init; }
+    public new DotNetObjectReference<UnderlyingSinkInProcess> ObjRef { get; init; }
 
     [JsonIgnore]
-    public Action<WritableStreamDefaultController>? Start { get; set; }
+    public new Action<WritableStreamDefaultControllerInProcess>? Start { get; set; }
 
     [JsonIgnore]
-    public Action<IJSObjectReference, WritableStreamDefaultController>? Write { get; set; }
+    public new Action<IJSObjectReference, WritableStreamDefaultControllerInProcess>? Write { get; set; }
 
     [JsonIgnore]
-    public Action? Close { get; set; }
+    public new Action? Close { get; set; }
 
     [JsonIgnore]
-    public Action? Abort { get; set; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    [JsonPropertyName("type")]
-    public ReadableStreamType? Type { get; set; }
-
-    [JsonPropertyName("autoAllocateChunkSize")]
-    public ulong AutoAllocateChunkSize { get; set; }
+    public new Action? Abort { get; set; }
 
     [JSInvokable]
-    public void InvokeStart(IJSObjectReference controller)
+    public void InvokeStart(IJSInProcessObjectReference controller)
     {
-        if (Start is null) return;
-        Start.Invoke(new WritableStreamDefaultController(jSRuntime, controller));
+        if (Start is null)
+        {
+            return;
+        }
+
+        Start.Invoke(new WritableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
     }
 
     [JSInvokable]
-    public void InvokeWrite(IJSObjectReference chunk, IJSObjectReference controller)
+    public void InvokeWrite(IJSObjectReference chunk, IJSInProcessObjectReference controller)
     {
-        if (Write is null) return;
-        Write.Invoke(chunk, new WritableStreamDefaultController(jSRuntime, controller));
+        if (Write is null)
+        {
+            return;
+        }
+
+        Write.Invoke(chunk, new WritableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
     }
 
     [JSInvokable]
-    public void InvokeClose()
+    public new void InvokeClose()
     {
-        if (Close is null) return;
+        if (Close is null)
+        {
+            return;
+        }
+
         Close.Invoke();
     }
 
     [JSInvokable]
-    public void InvokeAbort()
+    public new void InvokeAbort()
     {
-        if (Abort is null) return;
+        if (Abort is null)
+        {
+            return;
+        }
+
         Abort.Invoke();
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
         ObjRef.Dispose();
         GC.SuppressFinalize(this);

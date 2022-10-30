@@ -6,19 +6,18 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsource">Streams browser specs</see>
 /// </summary>
-public class UnderlyingSourceInProcess : IDisposable
+public class UnderlyingSourceInProcess : UnderlyingSource
 {
-    protected readonly IJSRuntime jSRuntime;
     private readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <returns>A new <see cref="UnderlyingSourceInProcess"/> wrapper instance.</returns>
+    /// <returns>A new wrapper instance for a <see cref="UnderlyingSource"/>.</returns>
     public static async Task<UnderlyingSourceInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
-        var inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new UnderlyingSourceInProcess(jSRuntime, inProcessHelper);
     }
 
@@ -26,30 +25,22 @@ public class UnderlyingSourceInProcess : IDisposable
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    internal UnderlyingSourceInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper)
+    internal UnderlyingSourceInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper) : base(jSRuntime)
     {
-        this.jSRuntime = jSRuntime;
         this.inProcessHelper = inProcessHelper;
         ObjRef = DotNetObjectReference.Create(this);
     }
 
-    public DotNetObjectReference<UnderlyingSourceInProcess> ObjRef { get; init; }
+    public new DotNetObjectReference<UnderlyingSourceInProcess> ObjRef { get; init; }
 
     [JsonIgnore]
-    public Action<ReadableStreamController>? Start { get; set; }
+    public new Action<ReadableStreamController>? Start { get; set; }
 
     [JsonIgnore]
-    public Action<ReadableStreamController>? Pull { get; set; }
+    public new Action<ReadableStreamController>? Pull { get; set; }
 
     [JsonIgnore]
-    public Action? Cancel { get; set; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    [JsonPropertyName("type")]
-    public ReadableStreamType? Type { get; set; }
-
-    [JsonPropertyName("autoAllocateChunkSize")]
-    public ulong AutoAllocateChunkSize { get; set; }
+    public new Action? Cancel { get; set; }
 
     [JSInvokable]
     public void InvokeStart(IJSInProcessObjectReference controller)
@@ -78,7 +69,7 @@ public class UnderlyingSourceInProcess : IDisposable
     }
 
     [JSInvokable]
-    public void InvokeCancel()
+    public new void InvokeCancel()
     {
         if (Type is ReadableStreamType.Bytes)
         {
@@ -90,7 +81,7 @@ public class UnderlyingSourceInProcess : IDisposable
         }
     }
 
-    public void Dispose()
+    public new void Dispose()
     {
         ObjRef.Dispose();
         GC.SuppressFinalize(this);

@@ -15,7 +15,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSInstance">An JS reference to an existing <see cref="ReadableStream"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamInProcess"/> which can access attributes synchronously.</returns>
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
     public static async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSInstance)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
@@ -50,22 +50,10 @@ public class ReadableStreamInProcess : ReadableStream
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSource">An <see cref="UnderlyingSourceInProcess"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="underlyingSource">An <see cref="UnderlyingSource"/> that which implements the Start, Pull, and/or Cancel methods.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
-    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSourceInProcess? underlyingSource = null, QueuingStrategy? strategy = null)
-    {
-        return await CreatePrivateAsync(jSRuntime, underlyingSource, strategy);
-    }
-
-    /// <summary>
-    /// Constructs a wrapper instance using the standard constructor.
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSource">An <see cref="UnderlyingSourceInProcess"/> that which implements the Start, Pull, and/or Cancel methods.</param>
-    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
-    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSourceInProcess? underlyingSource = null, ByteLengthQueuingStrategy? strategy = null)
+    public static new async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, UnderlyingSource? underlyingSource = null, CountQueuingStrategy? strategy = null)
     {
         return await CreatePrivateAsync(jSRuntime, underlyingSource, strategy?.JSReference);
     }

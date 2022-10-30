@@ -30,7 +30,7 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
     {
         get
         {
-            var jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference?>("getAttribute", JSReference, "byobRequest");
+            IJSInProcessObjectReference? jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference?>("getAttribute", JSReference, "byobRequest");
             if (jSInstance is null)
             {
                 return null;
@@ -42,7 +42,7 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
     /// <summary>
     /// The desired size to fill the controlled stream's internal queue.
     /// </summary>
-    /// <returns>Negative values mean that the queue is overfull.</returns>
+    /// <returns>Negative values means that the queue is overfull.</returns>
     public double? DesiredSize => inProcessHelper.Invoke<double?>("getAttribute", JSReference, "desiredSize");
 
     /// <summary>
@@ -57,7 +57,7 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
     /// <summary>
     /// Enqueues the chunk in the controlled stream.
     /// </summary>
-    /// <param name="chunk"></param>
+    /// <param name="chunk">A <see cref="ArrayBufferView"/> supplied as the BYOB.</param>
     /// <returns></returns>
     public void Enqueue(ArrayBufferView chunk)
     {

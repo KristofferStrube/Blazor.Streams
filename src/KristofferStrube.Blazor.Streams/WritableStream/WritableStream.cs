@@ -12,7 +12,7 @@ public class WritableStream : BaseJSWrapper
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
+    /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
     public static WritableStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new WritableStream(jSRuntime, jSReference);
@@ -24,7 +24,7 @@ public class WritableStream : BaseJSWrapper
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="underlyingSink">An <see cref="UnderlyingSink"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
+    /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
     public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSink? underlyingSink = null, QueuingStrategy? strategy = null)
     {
         return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy);
@@ -36,7 +36,7 @@ public class WritableStream : BaseJSWrapper
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="underlyingSink">An <see cref="UnderlyingSink"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
+    /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
     public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSink? underlyingSink = null, ByteLengthQueuingStrategy? strategy = null)
     {
         return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy?.JSReference);
@@ -48,44 +48,8 @@ public class WritableStream : BaseJSWrapper
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="underlyingSink">An <see cref="UnderlyingSink"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
     /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
+    /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
     public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSink? underlyingSink = null, CountQueuingStrategy? strategy = null)
-    {
-        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy?.JSReference);
-    }
-
-    /// <summary>
-    /// Constructs a wrapper instance using the standard constructor
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSink">An <see cref="UnderlyingSinkInProcess"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
-    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
-    public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSinkInProcess? underlyingSink = null, QueuingStrategy? strategy = null)
-    {
-        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy);
-    }
-
-    /// <summary>
-    /// Constructs a wrapper instance using the standard constructor
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSink">An <see cref="UnderlyingSinkInProcess"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
-    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
-    public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSinkInProcess? underlyingSink = null, ByteLengthQueuingStrategy? strategy = null)
-    {
-        return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy?.JSReference);
-    }
-
-    /// <summary>
-    /// Constructs a wrapper instance using the standard constructor
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="underlyingSink">An <see cref="UnderlyingSinkInProcess"/> that which implements the Start, Write, Close, and/or Abort methods.</param>
-    /// <param name="strategy">A queing strategy that specifies the chunk size and a high water mark.</param>
-    /// <returns>A wrapper instance for a WritableStream.</returns>
-    public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, UnderlyingSinkInProcess? underlyingSink = null, CountQueuingStrategy? strategy = null)
     {
         return await CreatePrivateAsync(jSRuntime, underlyingSink, strategy?.JSReference);
     }

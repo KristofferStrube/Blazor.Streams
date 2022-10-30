@@ -6,7 +6,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsink">Streams browser specs</see>
 /// </summary>
-public class UnderlyingSink : IDisposable
+public class Transformer : IDisposable
 {
     protected readonly Lazy<Task<IJSObjectReference>> helperTask;
     protected readonly IJSRuntime jSRuntime;
@@ -15,36 +15,33 @@ public class UnderlyingSink : IDisposable
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <returns>A new <see cref="UnderlyingSink"/> wrapper instance.</returns>
-    public static UnderlyingSink Create(IJSRuntime jSRuntime)
+    /// <returns>A new <see cref="Transformer"/> wrapper instance.</returns>
+    public static Transformer Create(IJSRuntime jSRuntime)
     {
-        return new UnderlyingSink(jSRuntime);
+        return new Transformer(jSRuntime);
     }
 
     /// <summary>
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    public UnderlyingSink(IJSRuntime jSRuntime)
+    public Transformer(IJSRuntime jSRuntime)
     {
         helperTask = new(() => jSRuntime.GetHelperAsync());
         this.jSRuntime = jSRuntime;
         ObjRef = DotNetObjectReference.Create(this);
     }
 
-    public DotNetObjectReference<UnderlyingSink> ObjRef { get; init; }
+    public DotNetObjectReference<Transformer> ObjRef { get; init; }
 
     [JsonIgnore]
-    public Func<WritableStreamDefaultController, Task>? Start { get; set; }
+    public Func<TransformStreamDefaultController, Task>? Start { get; set; }
 
     [JsonIgnore]
-    public Func<IJSObjectReference, WritableStreamDefaultController, Task>? Write { get; set; }
+    public Func<IJSObjectReference, TransformStreamDefaultController, Task>? Transform { get; set; }
 
     [JsonIgnore]
-    public Func<Task>? Close { get; set; }
-
-    [JsonIgnore]
-    public Func<Task>? Abort { get; set; }
+    public Func<TransformStreamDefaultController, Task>? Flush { get; set; }
 
     [JSInvokable]
     public async Task InvokeStart(IJSObjectReference controller)
@@ -54,40 +51,29 @@ public class UnderlyingSink : IDisposable
             return;
         }
 
-        await Start.Invoke(new WritableStreamDefaultController(jSRuntime, controller));
+        await Start.Invoke(new TransformStreamDefaultController(jSRuntime, controller));
     }
 
     [JSInvokable]
-    public async Task InvokeWrite(IJSObjectReference chunk, IJSObjectReference controller)
+    public async Task InvokeTransform(IJSObjectReference chunk, IJSObjectReference controller)
     {
-        if (Write is null)
+        if (Transform is null)
         {
             return;
         }
 
-        await Write.Invoke(chunk, new WritableStreamDefaultController(jSRuntime, controller));
+        await Transform.Invoke(chunk, new TransformStreamDefaultController(jSRuntime, controller));
     }
 
     [JSInvokable]
-    public async Task InvokeClose()
+    public async Task InvokeFlush(IJSObjectReference controller)
     {
-        if (Close is null)
+        if (Flush is null)
         {
             return;
         }
 
-        await Close.Invoke();
-    }
-
-    [JSInvokable]
-    public async Task InvokeAbort()
-    {
-        if (Abort is null)
-        {
-            return;
-        }
-
-        await Abort.Invoke();
+        await Flush.Invoke(new TransformStreamDefaultController(jSRuntime, controller));
     }
 
     public void Dispose()

@@ -21,7 +21,7 @@ public class ReadableByteStreamController : ReadableStreamController
     public async Task<ReadableStreamBYOBRequest?> GetBYOBRequestAsync()
     {
         IJSObjectReference helper = await helperTask.Value;
-        var jSInstance = await helper.InvokeAsync<IJSObjectReference?>("getAttribute", JSReference, "byobRequest");
+        IJSObjectReference? jSInstance = await helper.InvokeAsync<IJSObjectReference?>("getAttribute", JSReference, "byobRequest");
         if (jSInstance is null)
         {
             return null;
@@ -32,7 +32,7 @@ public class ReadableByteStreamController : ReadableStreamController
     /// <summary>
     /// Enqueues the chunk in the controlled stream.
     /// </summary>
-    /// <param name="chunk"></param>
+    /// <param name="chunk">A <see cref="ArrayBufferView"/> supplied as the BYOB.</param>
     /// <returns></returns>
     public async Task EnqueueAsync(ArrayBufferView chunk)
     {

@@ -22,5 +22,8 @@ public class QueuingStrategy
     public Func<IJSObjectReference, double>? Size { get; set; }
 
     [JSInvokable]
-    public double InvokeSize(IJSObjectReference chunk) => Size is null ? 0 : Size.Invoke(chunk);
+    public double InvokeSize(IJSObjectReference chunk)
+    {
+        return Size is null ? 0 : Size.Invoke(chunk);
+    }
 }

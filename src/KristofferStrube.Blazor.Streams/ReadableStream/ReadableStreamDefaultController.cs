@@ -17,9 +17,9 @@ public class ReadableStreamDefaultController : ReadableStreamController
     /// <summary>
     /// Enqueues the chunk in the controlled stream.
     /// </summary>
-    /// <param name="chunk"></param>
+    /// <param name="chunk">A JS reference to a chunk.</param>
     /// <returns></returns>
-    public async Task EnqueueAsync(IJSObjectReference? chunk = null)
+    public async Task EnqueueAsync(IJSObjectReference chunk)
     {
         await JSReference.InvokeVoidAsync("enqueue", chunk);
     }

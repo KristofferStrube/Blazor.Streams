@@ -4,6 +4,18 @@ export function setAttribute(object, attribute, value) { return object[attribute
 
 export function elementAt(array, index) { return array.at(index); }
 
+export function constructReadableStreamDefaultReader(stream) {
+    return new ReadableStreamDefaultReader(stream);
+}
+
+export function constructReadableStreamBYOBReader(stream) {
+    return new ReadableStreamBYOBReader(stream);
+}
+
+export function constructReadableWritablePair(readable, writable) {
+    return { readable: readable, writable: writable };
+}
+
 export function constructReadableStream(underlyingSource, strategy) {
     if (underlyingSource == null) {
         if (strategy == null) {
@@ -28,18 +40,6 @@ export function constructReadableStream(underlyingSource, strategy) {
     return new ReadableStream(source, queueingStrategy(strategy));
 }
 
-export function constructReadableStreamDefaultReader(stream) {
-    return new ReadableStreamDefaultReader(stream);
-}
-
-export function constructReadableStreamBYOBReader(stream) {
-    return new ReadableStreamBYOBReader(stream);
-}
-
-export function constructReadableWritablePair(readable, writable) {
-    return { readable: readable, writable: writable };
-}
-
 export function constructWritableStream(underlyingSink, strategy) {
     if (underlyingSink == null) {
         return new WritableStream(null, queueingStrategy(strategy));
@@ -59,6 +59,27 @@ export function constructWritableStream(underlyingSink, strategy) {
         },
     };
     return new WritableStream(sink, queueingStrategy(strategy));
+}
+
+export function constructTransformStream(underlyingSink, writableStrategy, readableStrategy) {
+    if (underlyingSink == null) {
+        return new TransformStream(null, queueingStrategy(writableStrategy), queueingStrategy(readableStrategy));
+    }
+    var sink = {
+        start(controller) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeStart', DotNet.createJSObjectReference(controller));
+        },
+        write(chunk, controller) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeWrite', DotNet.createJSObjectReference(chunk), DotNet.createJSObjectReference(controller));
+        },
+        close() {
+            underlyingSink.objRef.invokeMethodAsync('InvokeClose');
+        },
+        abort() {
+            underlyingSink.objRef.invokeMethodAsync('InvokeAbort');
+        },
+    };
+    return new TransformStream(sink, queueingStrategy(writableStrategy), queueingStrategy(readableStrategy));
 }
 
 function queueingStrategy(strategy) {

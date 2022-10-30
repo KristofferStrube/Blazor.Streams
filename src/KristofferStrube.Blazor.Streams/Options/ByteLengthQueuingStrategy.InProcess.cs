@@ -15,7 +15,7 @@ public class ByteLengthQueuingStrategyInProcess : ByteLengthQueuingStrategy
     /// <returns>A wrapper instance for a <see cref="ByteLengthQueuingStrategy"/>.</returns>
     public static async Task<ByteLengthQueuingStrategyInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
-        var inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new ByteLengthQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSReference);
     }
 
@@ -27,7 +27,7 @@ public class ByteLengthQueuingStrategyInProcess : ByteLengthQueuingStrategy
     /// <returns>A wrapper instance for a <see cref="ByteLengthQueuingStrategy"/>.</returns>
     public static new async Task<ByteLengthQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, QueuingStrategyInit init)
     {
-        var inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("constructByteLengthQueuingStrategy", init);
         return new ByteLengthQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSInstance);
     }
@@ -46,5 +46,8 @@ public class ByteLengthQueuingStrategyInProcess : ByteLengthQueuingStrategy
 
     public double HighWaterMark => inProcessHelper.Invoke<double>("getAttribute", JSReference, "highWaterMark");
 
-    public double Size(IJSObjectReference chunk) => JSReference.Invoke<double>("size", chunk);
+    public double Size(IJSObjectReference chunk)
+    {
+        return JSReference.Invoke<double>("size", chunk);
+    }
 }

@@ -37,7 +37,7 @@ public class ByteLengthQueuingStrategy : BaseJSWrapper
 
     public async Task<double> GetHighWaterMarkAsync()
     {
-        var helper = await helperTask.Value;
+        IJSObjectReference helper = await helperTask.Value;
         return await helper.InvokeAsync<double>("getAttribute", JSReference, "highWaterMark");
     }
 

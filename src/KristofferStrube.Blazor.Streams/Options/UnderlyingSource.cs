@@ -53,7 +53,11 @@ public class UnderlyingSource : IDisposable
     [JSInvokable]
     public async Task InvokeStart(IJSObjectReference controller)
     {
-        if (Start is null) return;
+        if (Start is null)
+        {
+            return;
+        }
+
         if (Type is ReadableStreamType.Bytes)
         {
             await Start.Invoke(new ReadableByteStreamController(jSRuntime, controller));
@@ -67,7 +71,11 @@ public class UnderlyingSource : IDisposable
     [JSInvokable]
     public async Task InvokePull(IJSObjectReference controller)
     {
-        if (Pull is null) return;
+        if (Pull is null)
+        {
+            return;
+        }
+
         if (Type is ReadableStreamType.Bytes)
         {
             await Pull.Invoke(new ReadableByteStreamController(jSRuntime, controller));
@@ -81,7 +89,11 @@ public class UnderlyingSource : IDisposable
     [JSInvokable]
     public async Task InvokeCancel()
     {
-        if (Cancel is null) return;
+        if (Cancel is null)
+        {
+            return;
+        }
+
         if (Type is ReadableStreamType.Bytes)
         {
             await Cancel.Invoke();

@@ -17,7 +17,7 @@ public abstract class ReadableStreamController : BaseJSWrapper
     /// <summary>
     /// The desired size to fill the controlled stream's internal queue.
     /// </summary>
-    /// <returns>Negative values mean that the queue is overfull.</returns>
+    /// <returns>Negative values means that the queue is overfull.</returns>
     public async Task<double?> GetDesiredSizeAsync()
     {
         IJSObjectReference helper = await helperTask.Value;

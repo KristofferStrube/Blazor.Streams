@@ -20,8 +20,8 @@ public class ReadableStreamBYOBRequest : BaseJSWrapper
     /// <returns>A shallow <see cref="ArrayBufferView"/> wrapper.</returns>
     public async Task<ArrayBufferView?> GetViewAsync()
     {
-        var helper = await helperTask.Value;
-        var jSInstance = await helper.InvokeAsync<IJSObjectReference?>("getAttribute", JSReference, "view");
+        IJSObjectReference helper = await helperTask.Value;
+        IJSObjectReference? jSInstance = await helper.InvokeAsync<IJSObjectReference?>("getAttribute", JSReference, "view");
         if (jSInstance is null)
         {
             return null;

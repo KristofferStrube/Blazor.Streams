@@ -8,14 +8,14 @@ public class CountQueuingStrategyInProcess : CountQueuingStrategy
     private readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="CountQueuingStrategyInProcess"/>.
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="CountQueuingStrategy"/>.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategyInProcess"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="CountQueuingStrategyInProcess"/>.</returns>
+    /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="CountQueuingStrategy"/>.</returns>
     public static async Task<CountQueuingStrategyInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
-        var inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new CountQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSReference);
     }
 
@@ -27,7 +27,7 @@ public class CountQueuingStrategyInProcess : CountQueuingStrategy
     /// <returns>A wrapper instance for a <see cref="CountQueuingStrategy"/>.</returns>
     public static new async Task<CountQueuingStrategyInProcess> CreateAsync(IJSRuntime jSRuntime, QueuingStrategyInit init)
     {
-        var inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
+        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("constructCountQueuingStrategy", init);
         return new CountQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSInstance);
     }
@@ -46,5 +46,8 @@ public class CountQueuingStrategyInProcess : CountQueuingStrategy
 
     public double HighWaterMark => inProcessHelper.Invoke<double>("getAttribute", JSReference, "highWaterMark");
 
-    public double Size(IJSObjectReference chunk) => JSReference.Invoke<double>("size", chunk);
+    public double Size(IJSObjectReference chunk)
+    {
+        return JSReference.Invoke<double>("size", chunk);
+    }
 }

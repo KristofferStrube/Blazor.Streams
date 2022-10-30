@@ -15,7 +15,7 @@ public class ReadableStreamDefaultControllerInProcess : ReadableStreamDefaultCon
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultControllerInProcess"/>.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultController"/>.</param>
     internal ReadableStreamDefaultControllerInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
@@ -25,7 +25,7 @@ public class ReadableStreamDefaultControllerInProcess : ReadableStreamDefaultCon
     /// <summary>
     /// The desired size to fill the controlled stream's internal queue.
     /// </summary>
-    /// <returns>Negative values mean that the queue is overfull.</returns>
+    /// <returns>Negative values means that the queue is overfull.</returns>
     public double? DesiredSize => inProcessHelper.Invoke<double?>("getAttribute", JSReference, "desiredSize");
 
     /// <summary>
@@ -40,9 +40,9 @@ public class ReadableStreamDefaultControllerInProcess : ReadableStreamDefaultCon
     /// <summary>
     /// Enqueues the chunk in the controlled stream.
     /// </summary>
-    /// <param name="chunk"></param>
+    /// <param name="chunk">A JS reference to a chunk.</param>
     /// <returns></returns>
-    public void Enqueue(IJSObjectReference? chunk = null)
+    public void Enqueue(IJSObjectReference chunk)
     {
         JSReference.InvokeVoid("enqueue", chunk);
     }

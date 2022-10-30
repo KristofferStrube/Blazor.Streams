@@ -30,7 +30,7 @@ public class ReadableStreamBYOBRequestInProcess : ReadableStreamBYOBRequest
     {
         get
         {
-            var jSInstance = inProcessHelper.Invoke<IJSObjectReference?>("getAttribute", JSReference, "view");
+            IJSObjectReference? jSInstance = inProcessHelper.Invoke<IJSObjectReference?>("getAttribute", JSReference, "view");
             if (jSInstance is null)
             {
                 return null;

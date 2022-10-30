@@ -15,7 +15,7 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReaderInProcess"/>.</returns>
+    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
     public static async Task<ReadableStreamBYOBReaderInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
@@ -27,7 +27,7 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="stream">A <see cref="ReadableStream"/> wrapper instance.</param>
-    /// <returns></returns>
+    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
     public static new async Task<ReadableStreamBYOBReaderInProcess> CreateAsync(IJSRuntime jSRuntime, ReadableStream stream)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
