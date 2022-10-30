@@ -3,14 +3,12 @@
 [![GitHub forks](https://img.shields.io/github/forks/KristofferStrube/Blazor.Streams)](https://github.com/KristofferStrube/Blazor.Streams/network/members)
 [![GitHub stars](https://img.shields.io/github/stars/KristofferStrube/Blazor.Streams)](https://github.com/KristofferStrube/Blazor.Streams/stargazers)
 
-<!--[![NuGet Downloads (official NuGet)](https://img.shields.io/nuget/dt/KristofferStrube.Blazor.Streams?label=NuGet%20Downloads)](https://www.nuget.org/packages/KristofferStrube.Blazor.Streams/)  -->
+[![NuGet Downloads (official NuGet)](https://img.shields.io/nuget/dt/KristofferStrube.Blazor.Streams?label=NuGet%20Downloads)](https://www.nuget.org/packages/KristofferStrube.Blazor.Streams/)
 
 # Introduction
 A Blazor wrapper for the browser API [Streams](https://streams.spec.whatwg.org/)
 
 The API standardizes ways to create, compose, and consume streams of data that map to low-level I/O primitives in the browser. This project implements a wrapper around the API for Blazor so that we can easily and safely interact with the streams of the browser.
-
-**The wrapper is still being developed so the API Coverage is very limited currently.**
 
 # Demo
 The sample project can be demoed at https://kristofferstrube.github.io/Blazor.Streams/
@@ -26,11 +24,11 @@ You need to install .NET 6.0 or newer to use the library.
 
 [Download .NET 6](https://dotnet.microsoft.com/download/dotnet/6.0)
 
-<!--## Installation
+## Installation
 You can install the package via Nuget with the Package Manager in your IDE or alternatively using the command line:
 ```bash
 dotnet add package KristofferStrube.Blazor.Streams
-```-->
+```
 
 ## Import
 You need to reference the package in order to use it in your pages. This can be done in `_Import.razor` by adding the following.
@@ -43,8 +41,6 @@ We can call the constructor for `ReadableStream`, `WritableStream`, or `Transfor
 @inject IJSInProcessRuntime JSRuntime
 
 @code {
-    private List<int> chunkSizes = new();
-
     protected override async Task OnInitializedAsync()
     {
         // Construct a stream in .NET.
