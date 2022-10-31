@@ -16,10 +16,10 @@ public class ReadableStreamInProcess : ReadableStream
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSInstance">An JS reference to an existing <see cref="ReadableStream"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
-    public static async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSInstance)
+    public static async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        return new ReadableStreamInProcess(jSRuntime, inProcesshelper, jSInstance);
+        return new ReadableStreamInProcess(jSRuntime, inProcesshelper, jSReference);
     }
 
     /// <summary>

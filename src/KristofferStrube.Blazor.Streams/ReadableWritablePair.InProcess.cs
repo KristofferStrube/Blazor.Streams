@@ -16,10 +16,10 @@ public class ReadableWritablePairInProcess : ReadableWritablePair
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSInstance">An JS reference to an existing ReadableStream.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableWritablePair"/>.</returns>
-    public static async Task<ReadableWritablePairInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSInstance)
+    public static async Task<ReadableWritablePairInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        return new ReadableWritablePairInProcess(jSRuntime, inProcesshelper, jSInstance);
+        return new ReadableWritablePairInProcess(jSRuntime, inProcesshelper, jSReference);
     }
 
     /// <summary>
