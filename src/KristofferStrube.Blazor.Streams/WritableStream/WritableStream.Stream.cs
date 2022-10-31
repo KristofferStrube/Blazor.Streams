@@ -52,13 +52,17 @@ public partial class WritableStream
     public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
     {
         writer ??= await GetWriterAsync();
-        var helper = await helperTask.Value;
+        IJSObjectReference helper = await helperTask.Value;
         await writer.WriteAsync(await helper.InvokeAsync<IJSObjectReference>("valueOf", buffer.ToArray()));
     }
 
     public override async Task FlushAsync(CancellationToken cancellationToken)
     {
-        if (writer is null) return;
+        if (writer is null)
+        {
+            return;
+        }
+
         await writer.CloseAsync();
         writer = null;
     }

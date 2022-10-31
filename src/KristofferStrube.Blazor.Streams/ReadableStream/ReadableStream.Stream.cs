@@ -47,12 +47,12 @@ public partial class ReadableStream
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
         reader ??= await GetDefaultReaderAsync();
-        var read = await reader.ReadAsync();
+        ReadableStreamReadResult read = await reader.ReadAsync();
         if (!await read.GetDoneAsync())
         {
-            var jSValue = await read.GetValueAsync();
-            var helper = await helperTask.Value;
-            var length = await helper.InvokeAsync<int>("getAttribute", jSValue, "length");
+            IJSObjectReference jSValue = await read.GetValueAsync();
+            IJSObjectReference helper = await helperTask.Value;
+            int length = await helper.InvokeAsync<int>("getAttribute", jSValue, "length");
             (await helper.InvokeAsync<byte[]>("byteArray", jSValue)).CopyTo(buffer);
             return length;
         }
