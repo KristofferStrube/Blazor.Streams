@@ -2,7 +2,7 @@
 
 namespace KristofferStrube.Blazor.Streams;
 
-public partial class ReadableStream : Stream
+public partial class ReadableStream
 {
     private ReadableStreamDefaultReader? reader;
 
@@ -46,10 +46,7 @@ public partial class ReadableStream : Stream
 
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        if (reader is null)
-        {
-            reader = await GetDefaultReaderAsync();
-        }
+        reader ??= await GetDefaultReaderAsync();
         var read = await reader.ReadAsync();
         if (!await read.GetDoneAsync())
         {

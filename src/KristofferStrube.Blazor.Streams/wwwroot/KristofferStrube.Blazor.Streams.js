@@ -115,3 +115,7 @@ export function byteArray(object) {
     var bytes = new Uint8Array(object);
     return bytes;
 }
+
+export function valueOf(object) {
+    return object;
+}

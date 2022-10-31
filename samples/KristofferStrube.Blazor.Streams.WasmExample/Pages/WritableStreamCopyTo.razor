@@ -1,0 +1,38 @@
+﻿@page "/WritableStreamCopyTo"
+@inject IJSInProcessRuntime JSRuntime
+@inject HttpClient HttpClient
+
+<PageTitle>Streams - WritableStream CopyTo</PageTitle>
+
+<h2>Stream copying to a WritableStream</h2>
+<code>WritableStream</code> inherits from the .NET <code>Stream</code> class. This means that we can use the <code>CopyToAsync</code> method to copy the content of any other .NET <code>Stream</code> to it.
+<br />
+In this sample we copy a .NET <code>Stream</code> containing an image to a <code>WritableStream</code> that streams its content to a base64 encoding which a image-tag uses as its source.
+<br />
+<img src="@imageUrl" style="max-width:100%; max-height:50vh;" />
+
+@code {
+    string imageUrl = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var data = await HttpClient.GetStreamAsync("images/mountain.jpg");
+
+        var writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
+            {
+                Start = (_) =>
+                {
+                    imageUrl = "data:image/png;base64,";
+                    return Task.CompletedTask;
+                },
+                Write = async (chunk, _) =>
+                {
+                    var bytes = await chunk.InvokeAsync<byte[]>("valueOf");
+                    imageUrl += Convert.ToBase64String(bytes);
+                    StateHasChanged();
+                }
+            }, new QueuingStrategy());
+
+        await data.CopyToAsync(writableStream);
+    }
+}

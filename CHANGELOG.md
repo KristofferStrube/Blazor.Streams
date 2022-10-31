@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- `ReadableStream` now extends `Stream` and can be used to `CopyTo` other .NET streams.
+- `ReadableStream` now extends `Stream` and can be read from by other .NET streams using `CopyToAsync`.
+- `WritableStream` now extends `Stream` and can be written to by other .NET streams using `CopyToAsync`.
 
 ## [0.1.0] - 2022-10-30
 ### Added

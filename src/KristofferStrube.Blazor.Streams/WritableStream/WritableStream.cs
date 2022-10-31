@@ -5,7 +5,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#ws-class-definition">Streams browser specs</see>
 /// </summary>
-public class WritableStream : BaseJSWrapper
+public partial class WritableStream : BaseJSStreamableWrapper
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStream"/>.
