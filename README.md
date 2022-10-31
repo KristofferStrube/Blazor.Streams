@@ -65,6 +65,12 @@ We can call the constructor for `ReadableStream`, `WritableStream`, or `Transfor
 }
 ```
 
+For the above example we use two small JavaScript functions that basically serves as a way to convert the .NET `DotNetStreamReference` object into an `IJSObjectReference` and a way to get any attribute of an `IJSObjectReference`. These methods looks like this and can be defined in the `index.html` or `_host.razor` page.
+```javascript
+function jSStreamReference(streamRef) { return streamRef.stream(); }
+function getAttribute(object, attribute) { return object[attribute]; }
+```
+
 # Issues
 Feel free to open issues on the repository if you find any errors with the package or have wishes for features.
 
