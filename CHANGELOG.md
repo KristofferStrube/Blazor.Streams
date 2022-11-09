@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2022-11-09
+### Fixed
+- Fixed that `WritableStream`'s constructor was internal and made it protected instead.
+
 ## [0.2.0] - 2022-10-31
 ### Added
 - `ReadableStream` now extends `Stream` and can be read from by other .NET streams using `CopyToAsync`.

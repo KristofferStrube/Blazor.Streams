@@ -66,7 +66,7 @@ public partial class WritableStream : BaseJSStreamableWrapper
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
-    internal WritableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected WritableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Indicates whether the stream already has a writer.

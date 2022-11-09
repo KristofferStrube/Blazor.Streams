@@ -48,6 +48,6 @@ public class ReadableWritablePair : BaseJSWrapper
     {
         IJSObjectReference helper = await helperTask.Value;
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "writable");
-        return new WritableStream(jSRuntime, jSInstance);
+        return WritableStream.Create(jSRuntime, jSInstance);
     }
 }
