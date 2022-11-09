@@ -66,4 +66,11 @@ public partial class WritableStream
         await writer.CloseAsync();
         writer = null;
     }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await base.DisposeAsync();
+        await CloseAsync();
+        GC.SuppressFinalize(this);
+    }
 }

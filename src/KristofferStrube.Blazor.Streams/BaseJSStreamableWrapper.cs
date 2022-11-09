@@ -20,7 +20,7 @@ public abstract class BaseJSStreamableWrapper : Stream, IAsyncDisposable
         this.jSRuntime = jSRuntime;
     }
 
-    public new async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await base.DisposeAsync();
         if (helperTask.IsValueCreated)
