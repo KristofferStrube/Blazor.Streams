@@ -2,6 +2,9 @@
 
 namespace KristofferStrube.Blazor.Streams;
 
+/// <summary>
+/// <see href="https://streams.spec.whatwg.org/#transformstream">Streams browser specs</see>
+/// </summary>
 public class TransformStreamInProcess : TransformStream
 {
     public new IJSInProcessObjectReference JSReference;
@@ -160,7 +163,7 @@ public class TransformStreamInProcess : TransformStream
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "readable");
-            return new ReadableStreamInProcess(jSRuntime, inProcessHelper, jSInstance);
+            return new ReadableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "readable", value.JSReference);
     }
@@ -170,7 +173,7 @@ public class TransformStreamInProcess : TransformStream
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "writable");
-            return new WritableStreamInProcess(jSRuntime, inProcessHelper, jSInstance);
+            return new WritableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "writable", value.JSReference);
     }

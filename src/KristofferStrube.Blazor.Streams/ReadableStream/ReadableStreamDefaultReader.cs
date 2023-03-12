@@ -46,7 +46,7 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     public async Task<ReadableStreamReadResult> ReadAsync()
     {
         IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("read");
-        return new ReadableStreamReadResult(jSRuntime, jSInstance);
+        return new ReadableStreamReadResult(JSRuntime, jSInstance);
     }
 
     public async IAsyncEnumerator<IJSObjectReference> GetAsyncEnumerator(CancellationToken cancellationToken = default)

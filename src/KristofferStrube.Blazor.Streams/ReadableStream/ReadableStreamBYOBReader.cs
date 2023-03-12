@@ -45,6 +45,6 @@ public class ReadableStreamBYOBReader : ReadableStreamReader
     public async Task<ReadableStreamReadResult> ReadAsync(ArrayBufferView view)
     {
         IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("read", view);
-        return new ReadableStreamReadResult(jSRuntime, jSInstance);
+        return new ReadableStreamReadResult(JSRuntime, jSInstance);
     }
 }

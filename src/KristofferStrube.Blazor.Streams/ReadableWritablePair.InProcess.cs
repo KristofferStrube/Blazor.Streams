@@ -5,7 +5,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-readablewritablepair">Streams browser specs</see>
 /// </summary>
-public class ReadableWritablePairInProcess : ReadableWritablePair
+public class ReadableWritablePairInProcess : ReadableWritablePair, IGenericTransformStreamInProcess
 {
     public new IJSInProcessObjectReference JSReference;
     private readonly IJSInProcessObjectReference inProcessHelper;
@@ -51,7 +51,7 @@ public class ReadableWritablePairInProcess : ReadableWritablePair
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "readable");
-            return new ReadableStreamInProcess(jSRuntime, inProcessHelper, jSInstance);
+            return new ReadableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "readable", value.JSReference);
     }
@@ -61,7 +61,7 @@ public class ReadableWritablePairInProcess : ReadableWritablePair
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "writable");
-            return new WritableStreamInProcess(jSRuntime, inProcessHelper, jSInstance);
+            return new WritableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "writable", value.JSReference);
     }

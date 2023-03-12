@@ -54,7 +54,7 @@ public class ReadableStreamDefaultReaderInProcess : ReadableStreamDefaultReader
     public new async Task<ReadableStreamReadResultInProcess> ReadAsync()
     {
         IJSInProcessObjectReference jSInstance = await JSReference.InvokeAsync<IJSInProcessObjectReference>("read");
-        return new ReadableStreamReadResultInProcess(jSRuntime, inProcessHelper, jSInstance);
+        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance);
     }
 
     /// <summary>

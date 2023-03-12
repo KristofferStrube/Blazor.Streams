@@ -26,7 +26,7 @@ public class ReadableByteStreamController : ReadableStreamController
         {
             return null;
         }
-        return new ReadableStreamBYOBRequest(jSRuntime, jSInstance);
+        return new ReadableStreamBYOBRequest(JSRuntime, jSInstance);
     }
 
     /// <summary>

@@ -124,7 +124,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// </summary>
     /// <param name="transform">The transformer that is piped through.</param>
     /// <param name="options">An optional <see cref="StreamPipeOptions"/>.</param>
-    public ReadableStream PipeThrough(ReadableWritablePair transform, StreamPipeOptions? options = null)
+    public ReadableStream PipeThrough(IGenericTransformStreamInProcess transform, StreamPipeOptions? options = null)
     {
         IJSObjectReference jSInstance = JSReference.Invoke<IJSObjectReference>("pipeThrough", transform.JSReference, options);
         return new ReadableStream(jSRuntime, jSInstance);

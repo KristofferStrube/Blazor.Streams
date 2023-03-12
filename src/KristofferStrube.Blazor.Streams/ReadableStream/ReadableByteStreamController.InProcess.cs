@@ -35,7 +35,7 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
             {
                 return null;
             }
-            return new ReadableStreamBYOBRequestInProcess(jSRuntime, inProcessHelper, jSInstance);
+            return new ReadableStreamBYOBRequestInProcess(JSRuntime, inProcessHelper, jSInstance);
         }
     }
 

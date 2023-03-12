@@ -1,12 +1,14 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
-public abstract class BaseJSWrapper : IAsyncDisposable
+public abstract class BaseJSWrapper : IAsyncDisposable, IJSWrapper
 {
-    public readonly IJSObjectReference JSReference;
+    public IJSObjectReference JSReference { get; }
+    public IJSRuntime JSRuntime { get; }
+
     protected readonly Lazy<Task<IJSObjectReference>> helperTask;
-    protected readonly IJSRuntime jSRuntime;
 
     /// <summary>
     /// Constructs a wrapper instance for an equivalent JS instance.
@@ -17,7 +19,7 @@ public abstract class BaseJSWrapper : IAsyncDisposable
     {
         helperTask = new(() => jSRuntime.GetHelperAsync());
         JSReference = jSReference;
-        this.jSRuntime = jSRuntime;
+        this.JSRuntime = jSRuntime;
     }
 
     public async ValueTask DisposeAsync()

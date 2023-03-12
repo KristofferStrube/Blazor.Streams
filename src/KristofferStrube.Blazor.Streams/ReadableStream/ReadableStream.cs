@@ -129,7 +129,7 @@ public partial class ReadableStream : BaseJSStreamableWrapper
     /// <param name="transform">The transformer that is piped through.</param>
     /// <param name="options">An optional <see cref="StreamPipeOptions"/>.</param>
     /// <returns></returns>
-    public async Task<ReadableStream> PipeThroughAsync(ReadableWritablePair transform, StreamPipeOptions? options = null)
+    public async Task<ReadableStream> PipeThroughAsync(IGenericTransformStream transform, StreamPipeOptions? options = null)
     {
         IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("pipeThrough", transform.JSReference, options);
         return new ReadableStream(jSRuntime, jSInstance);

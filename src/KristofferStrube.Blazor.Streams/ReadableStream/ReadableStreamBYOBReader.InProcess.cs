@@ -54,7 +54,7 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader
     public new async Task<ReadableStreamReadResultInProcess> ReadAsync(ArrayBufferView view)
     {
         IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference);
-        return new ReadableStreamReadResultInProcess(jSRuntime, inProcessHelper, jSInstance);
+        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance);
     }
 
     /// <summary>

@@ -2,7 +2,10 @@
 
 namespace KristofferStrube.Blazor.Streams;
 
-public class TransformStream : BaseJSWrapper
+/// <summary>
+/// <see href="https://streams.spec.whatwg.org/#transformstream">Streams browser specs</see>
+/// </summary>
+public class TransformStream : BaseJSWrapper, IGenericTransformStream
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="TransformStream"/>.
@@ -150,13 +153,13 @@ public class TransformStream : BaseJSWrapper
     {
         IJSObjectReference helper = await helperTask.Value;
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "readable");
-        return new ReadableStream(jSRuntime, jSInstance);
+        return new ReadableStream(JSRuntime, jSInstance);
     }
 
     public async Task<WritableStream> GetWritableAsync()
     {
         IJSObjectReference helper = await helperTask.Value;
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "writable");
-        return WritableStream.Create(jSRuntime, jSInstance);
+        return WritableStream.Create(JSRuntime, jSInstance);
     }
 }
