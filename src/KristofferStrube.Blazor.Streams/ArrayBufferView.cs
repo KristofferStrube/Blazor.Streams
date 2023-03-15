@@ -16,7 +16,7 @@ public class ArrayBufferView
         return new ArrayBufferView(jSInstance);
     }
 
-    internal ArrayBufferView(IJSObjectReference jSReference)
+    protected internal ArrayBufferView(IJSObjectReference jSReference)
     {
         JSReference = jSReference;
     }

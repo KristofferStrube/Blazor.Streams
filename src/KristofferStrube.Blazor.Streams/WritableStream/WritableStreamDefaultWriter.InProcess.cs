@@ -39,8 +39,9 @@ public class WritableStreamDefaultWriterInProcess : WritableStreamDefaultWriter
     /// Constructs a wrapper instance for a given JS instance of a <see cref="WritableStreamDefaultWriterInProcess"/>.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
+    /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriterInProcess"/>.</param>
-    internal WritableStreamDefaultWriterInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected internal WritableStreamDefaultWriterInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

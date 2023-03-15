@@ -13,9 +13,21 @@ public partial class ReadableStream : BaseJSStreamableWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStream"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ReadableStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new ReadableStream(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStream"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStream"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
+    public static Task<ReadableStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new ReadableStream(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -66,7 +78,7 @@ public partial class ReadableStream : BaseJSStreamableWrapper
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStream"/>.</param>
-    internal ReadableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected internal ReadableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Indicates whether the stream already has a reader.

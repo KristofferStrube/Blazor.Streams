@@ -13,9 +13,21 @@ public class TransformStreamDefaultController : BaseJSWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="TransformStreamDefaultController"/>.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStreamDefaultController"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static TransformStreamDefaultController Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new TransformStreamDefaultController(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="TransformStreamDefaultController"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="TransformStreamDefaultController"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="TransformStreamDefaultController"/>.</returns>
+    public static Task<TransformStreamDefaultController> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new TransformStreamDefaultController(jSRuntime, jSReference));
     }
 
     /// <summary>

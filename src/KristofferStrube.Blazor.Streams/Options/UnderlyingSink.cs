@@ -16,9 +16,20 @@ public class UnderlyingSink : IDisposable
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new <see cref="UnderlyingSink"/> wrapper instance.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static UnderlyingSink Create(IJSRuntime jSRuntime)
     {
         return new UnderlyingSink(jSRuntime);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <returns>A new <see cref="UnderlyingSink"/> wrapper instance.</returns>
+    public static Task<UnderlyingSink> CreateAsync(IJSRuntime jSRuntime)
+    {
+        return Task.FromResult(new UnderlyingSink(jSRuntime));
     }
 
     /// <summary>

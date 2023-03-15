@@ -152,7 +152,7 @@ public class TransformStreamInProcess : TransformStream
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="TransformStreamInProcess"/>.</param>
-    internal TransformStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected TransformStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

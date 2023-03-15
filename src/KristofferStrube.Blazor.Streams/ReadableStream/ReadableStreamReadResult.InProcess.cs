@@ -29,6 +29,6 @@ public class ReadableStreamReadResultInProcess : ReadableStreamReadResult
     /// <summary>
     /// Indicates whether this is the last read which means that <see cref="Value"/> will be <c>undefined</c>.
     /// </summary>
-    /// <returns><see langword="true"/> if the chunk is the last which contains no <see cref="value"/> else <see langword="false"/></returns>
+    /// <returns><see langword="true"/> if the chunk is the last which contains no <see cref="Value"/> else <see langword="false"/></returns>
     public bool Done => inProcessHelper.Invoke<bool>("getAttribute", JSReference, "done");
 }

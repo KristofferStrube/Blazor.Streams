@@ -13,9 +13,21 @@ public class TransformStream : BaseJSWrapper, IGenericTransformStream
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="TransformStream"/>.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static TransformStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new TransformStream(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="TransformStream"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="TransformStream"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
+    public static Task<TransformStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new TransformStream(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -147,7 +159,7 @@ public class TransformStream : BaseJSWrapper, IGenericTransformStream
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="TransformStream"/>.</param>
-    internal TransformStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected TransformStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     public async Task<ReadableStream> GetReadableAsync()
     {
@@ -160,6 +172,6 @@ public class TransformStream : BaseJSWrapper, IGenericTransformStream
     {
         IJSObjectReference helper = await helperTask.Value;
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "writable");
-        return WritableStream.Create(JSRuntime, jSInstance);
+        return await WritableStream.CreateAsync(JSRuntime, jSInstance);
     }
 }

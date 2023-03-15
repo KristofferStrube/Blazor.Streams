@@ -38,7 +38,7 @@ public class CountQueuingStrategyInProcess : CountQueuingStrategy
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
-    internal CountQueuingStrategyInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected CountQueuingStrategyInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

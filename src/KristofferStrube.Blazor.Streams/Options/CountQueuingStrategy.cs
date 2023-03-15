@@ -10,9 +10,21 @@ public class CountQueuingStrategy : BaseJSWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
     /// <returns>A wrapper instance for a <see cref="CountQueuingStrategy"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static CountQueuingStrategy Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new CountQueuingStrategy(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="CountQueuingStrategy"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="CountQueuingStrategy"/>.</returns>
+    public static Task<CountQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new CountQueuingStrategy(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -33,7 +45,7 @@ public class CountQueuingStrategy : BaseJSWrapper
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
-    internal CountQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected CountQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     public async Task<double> GetHighWaterMarkAsync()
     {

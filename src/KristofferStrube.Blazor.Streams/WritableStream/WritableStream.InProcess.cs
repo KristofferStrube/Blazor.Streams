@@ -71,7 +71,7 @@ public class WritableStreamInProcess : WritableStream
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
-    internal WritableStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected internal WritableStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

@@ -12,7 +12,7 @@ public class ReadableStreamDefaultController : ReadableStreamController
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultController"/>.</param>
-    public ReadableStreamDefaultController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    internal ReadableStreamDefaultController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Enqueues the chunk in the controlled stream.

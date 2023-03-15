@@ -16,9 +16,20 @@ public class UnderlyingSource : IDisposable
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new <see cref="UnderlyingSource"/> wrapper instance.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static UnderlyingSource Create(IJSRuntime jSRuntime)
     {
         return new UnderlyingSource(jSRuntime);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <returns>A new <see cref="UnderlyingSource"/> wrapper instance.</returns>
+    public static Task<UnderlyingSource> CreateAsync(IJSRuntime jSRuntime)
+    {
+        return Task.FromResult(new UnderlyingSource(jSRuntime));
     }
 
     /// <summary>

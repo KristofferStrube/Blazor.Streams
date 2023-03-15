@@ -16,6 +16,7 @@ public class Transformer : IDisposable
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new <see cref="Transformer"/> wrapper instance.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static Transformer Create(IJSRuntime jSRuntime)
     {
         return new Transformer(jSRuntime);
@@ -25,9 +26,19 @@ public class Transformer : IDisposable
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    public Transformer(IJSRuntime jSRuntime)
+    /// <returns>A new <see cref="Transformer"/> wrapper instance.</returns>
+    public static Task<Transformer> CreateAsync(IJSRuntime jSRuntime)
     {
-        helperTask = new(() => jSRuntime.GetHelperAsync());
+        return Task.FromResult(new Transformer(jSRuntime));
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    protected Transformer(IJSRuntime jSRuntime)
+    {
+        helperTask = new(jSRuntime.GetHelperAsync);
         this.jSRuntime = jSRuntime;
         ObjRef = DotNetObjectReference.Create(this);
     }

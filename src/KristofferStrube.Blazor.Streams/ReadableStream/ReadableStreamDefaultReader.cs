@@ -14,9 +14,21 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStreamDefaultReader"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ReadableStreamDefaultReader Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new ReadableStreamDefaultReader(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamDefaultReader"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStreamDefaultReader"/>.</returns>
+    public static Task<ReadableStreamDefaultReader> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new ReadableStreamDefaultReader(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -37,7 +49,7 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
-    public ReadableStreamDefaultReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    internal ReadableStreamDefaultReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Reads a chunk of a stream.

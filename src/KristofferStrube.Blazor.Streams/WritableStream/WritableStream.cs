@@ -13,9 +13,21 @@ public partial class WritableStream : BaseJSStreamableWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
     /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static WritableStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new WritableStream(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStream"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
+    public static Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new WritableStream(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -103,6 +115,6 @@ public partial class WritableStream : BaseJSStreamableWrapper
     public async Task<WritableStreamDefaultWriter> GetWriterAsync()
     {
         IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("getWriter");
-        return new WritableStreamDefaultWriter(jSRuntime, jSInstance);
+        return await WritableStreamDefaultWriter.CreateAsync(jSRuntime, jSInstance);
     }
 }

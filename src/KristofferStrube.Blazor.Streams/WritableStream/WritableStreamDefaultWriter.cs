@@ -13,9 +13,21 @@ public class WritableStreamDefaultWriter : BaseJSWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriter"/>.</param>
     /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultWriter"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static WritableStreamDefaultWriter Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new WritableStreamDefaultWriter(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStreamDefaultWriter"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriter"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultWriter"/>.</returns>
+    public static Task<WritableStreamDefaultWriter> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new WritableStreamDefaultWriter(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -36,7 +48,7 @@ public class WritableStreamDefaultWriter : BaseJSWrapper
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriter"/>.</param>
-    internal WritableStreamDefaultWriter(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected WritableStreamDefaultWriter(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// A JS reference to the promise related to closing the writer.

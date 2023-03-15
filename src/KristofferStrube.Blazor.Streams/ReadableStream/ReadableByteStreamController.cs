@@ -12,7 +12,7 @@ public class ReadableByteStreamController : ReadableStreamController
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableByteStreamController"/>.</param>
-    public ReadableByteStreamController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    internal ReadableByteStreamController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Returns the current BYOB pull request, or null if there isn’t one.

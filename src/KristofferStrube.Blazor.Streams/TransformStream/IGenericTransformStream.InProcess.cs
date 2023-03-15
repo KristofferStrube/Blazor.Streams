@@ -5,6 +5,6 @@
 /// </summary>
 public interface IGenericTransformStreamInProcess : IGenericTransformStream
 {
-    public ReadableStreamInProcess Readable { get; }
-    public WritableStreamInProcess Writable { get; }
+    public new Task<ReadableStreamInProcess> GetReadableAsync();
+    public new Task<WritableStreamInProcess> GetWritableAsync();
 }

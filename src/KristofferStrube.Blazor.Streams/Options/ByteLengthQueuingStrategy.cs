@@ -10,9 +10,21 @@ public class ByteLengthQueuingStrategy : BaseJSWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ByteLengthQueuingStrategy"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ByteLengthQueuingStrategy Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new ByteLengthQueuingStrategy(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ByteLengthQueuingStrategy"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="ByteLengthQueuingStrategy"/>.</returns>
+    public static Task<ByteLengthQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new ByteLengthQueuingStrategy(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -33,7 +45,7 @@ public class ByteLengthQueuingStrategy : BaseJSWrapper
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
-    internal ByteLengthQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected ByteLengthQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     public async Task<double> GetHighWaterMarkAsync()
     {

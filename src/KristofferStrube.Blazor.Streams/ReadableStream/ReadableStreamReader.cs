@@ -12,7 +12,7 @@ public abstract class ReadableStreamReader : BaseJSWrapper
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamReader"/>.</param>
-    internal ReadableStreamReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    protected ReadableStreamReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Sets the internal <c>reader</c> slot to <c>undefined</c>.

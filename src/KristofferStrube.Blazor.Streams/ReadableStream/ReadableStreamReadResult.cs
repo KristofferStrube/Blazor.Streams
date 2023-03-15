@@ -27,7 +27,7 @@ public class ReadableStreamReadResult : BaseJSWrapper
     /// <summary>
     /// Indicates whether this is the last read which means that <see cref="GetValueAsync"/> will be <c>undefined</c>.
     /// </summary>
-    /// <returns><see langword="true"/> if the chunk is the last which contains no <see cref="value"/> else <see langword="false"/></returns>
+    /// <returns><see langword="true"/> if the chunk is the last which contains no <see cref="GetValueAsync"/> else <see langword="false"/></returns>
     public async Task<bool> GetDoneAsync()
     {
         IJSObjectReference helper = await helperTask.Value;

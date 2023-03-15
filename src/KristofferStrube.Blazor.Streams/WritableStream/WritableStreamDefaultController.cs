@@ -13,9 +13,21 @@ public class WritableStreamDefaultController : BaseJSWrapper
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultController"/>.</param>
     /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultController"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static WritableStreamDefaultController Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new WritableStreamDefaultController(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStreamDefaultController"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultController"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultController"/>.</returns>
+    public static Task<WritableStreamDefaultController> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new WritableStreamDefaultController(jSRuntime, jSReference));
     }
 
     /// <summary>

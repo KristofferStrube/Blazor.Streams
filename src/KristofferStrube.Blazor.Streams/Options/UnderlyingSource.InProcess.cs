@@ -15,7 +15,7 @@ public class UnderlyingSourceInProcess : UnderlyingSource
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new wrapper instance for a <see cref="UnderlyingSource"/>.</returns>
-    public static async Task<UnderlyingSourceInProcess> CreateAsync(IJSRuntime jSRuntime)
+    public new static async Task<UnderlyingSourceInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new UnderlyingSourceInProcess(jSRuntime, inProcessHelper);
@@ -25,7 +25,8 @@ public class UnderlyingSourceInProcess : UnderlyingSource
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    internal UnderlyingSourceInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper) : base(jSRuntime)
+    /// <param name="inProcessHelper">An in process helper instance.</param>
+    protected UnderlyingSourceInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper) : base(jSRuntime)
     {
         this.inProcessHelper = inProcessHelper;
         ObjRef = DotNetObjectReference.Create(this);

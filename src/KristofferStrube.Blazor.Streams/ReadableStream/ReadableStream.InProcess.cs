@@ -14,7 +14,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStream"/>.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="jSInstance">An JS reference to an existing <see cref="ReadableStream"/>.</param>
+    /// <param name="jSReference">An JS reference to an existing <see cref="ReadableStream"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStream"/>.</returns>
     public static async Task<ReadableStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
@@ -71,7 +71,7 @@ public class ReadableStreamInProcess : ReadableStream
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="inProcessHelper">An in process helper instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamInProcess"/>.</param>
-    internal ReadableStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected internal ReadableStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

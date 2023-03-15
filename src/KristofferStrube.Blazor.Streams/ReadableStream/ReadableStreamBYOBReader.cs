@@ -13,9 +13,21 @@ public class ReadableStreamBYOBReader : ReadableStreamReader
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
     /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
+    [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ReadableStreamBYOBReader Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
         return new ReadableStreamBYOBReader(jSRuntime, jSReference);
+    }
+
+    /// <summary>
+    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamBYOBReader"/>.
+    /// </summary>
+    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
+    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
+    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
+    public static Task<ReadableStreamBYOBReader> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return Task.FromResult(new ReadableStreamBYOBReader(jSRuntime, jSReference));
     }
 
     /// <summary>
@@ -36,7 +48,7 @@ public class ReadableStreamBYOBReader : ReadableStreamReader
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
     /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
-    public ReadableStreamBYOBReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    internal ReadableStreamBYOBReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
 
     /// <summary>
     /// Reads a chunk of a stream.

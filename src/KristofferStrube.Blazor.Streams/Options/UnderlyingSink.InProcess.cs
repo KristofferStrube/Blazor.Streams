@@ -15,7 +15,7 @@ public class UnderlyingSinkInProcess : UnderlyingSink
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new wrapper instance for a <see cref="UnderlyingSinkInProcess"/>.</returns>
-    public static async Task<UnderlyingSinkInProcess> CreateAsync(IJSRuntime jSRuntime)
+    public new static async Task<UnderlyingSinkInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new UnderlyingSinkInProcess(jSRuntime, inProcessHelper);
@@ -25,7 +25,8 @@ public class UnderlyingSinkInProcess : UnderlyingSink
     /// Constructs a wrapper instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    internal UnderlyingSinkInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper) : base(jSRuntime)
+    /// <param name="inProcessHelper">An in process helper instance.</param>
+    protected UnderlyingSinkInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper) : base(jSRuntime)
     {
         this.inProcessHelper = inProcessHelper;
         ObjRef = DotNetObjectReference.Create(this);
