@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - 2023-03-15
 ### Changed
+- Changed .NET version to `7.0`.
 - Marked all `Create` methods as `Obsolete` and suggests to use `CreateAsync` instead.
 ### Added
 - Added `IGenericTransformStream` and `IGenericTransformStreamInProcess` interfaces for use with the `PipeThroughAsync` method.
