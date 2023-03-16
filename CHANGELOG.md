@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-03-15
+### Changed
+- Marked all `Create` methods as `Obsolete` and suggests to use `CreateAsync` instead.
+### Added
+- Added `IGenericTransformStream` and `IGenericTransformStreamInProcess` interfaces for use with the `PipeThroughAsync` method.
+- Added the generation of a documentation file packaging all XML comments with the package.
+- Added `CreateAsync` methods to all wrapper instances as an alternative to the previous synchronous `Create` methods.
+
 ## [0.2.2] - 2022-11-09
 ### Fixed
 - Fixed that `WritableStream`' did not call `CloseAsync` when invoking `DisposeAsync`.
