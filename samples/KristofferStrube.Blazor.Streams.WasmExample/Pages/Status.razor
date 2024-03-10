@@ -58,7 +58,7 @@ else
                     color = "lightgreen";
                     supportedIndex++;
                 }
-                else if (new string(fetchedLines[fetchedIndex].Trim().Take(10).ToArray()) == new string(supportedLines[supportedIndex].Trim().Take(10).ToArray()))
+                else if (new string(fetchedLines[fetchedIndex].Trim().Take(20).ToArray()) == new string(supportedLines[supportedIndex].Trim().Take(20).ToArray()))
                 {
                     color = "lemonchiffon";
                     supportedIndex++;
@@ -91,10 +91,6 @@ enum ReadableStreamReaderMode { ""byob"" };
 
 dictionary ReadableStreamGetReaderOptions {
     ReadableStreamReaderMode mode;
-};
-
-dictionary ReadableStreamIteratorOptions {
-    boolean preventCancel = false;
 };
 
 dictionary ReadableWritablePair {
