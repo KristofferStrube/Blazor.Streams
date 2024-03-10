@@ -55,7 +55,19 @@ public class ReadableStreamBYOBReader : ReadableStreamReader, IJSCreatable<Reada
     /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
     public async Task<ReadableStreamReadResult> ReadAsync(IArrayBufferView view)
     {
-        IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("read", view);
+        IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("read", view.JSReference);
+        return new ReadableStreamReadResult(JSRuntime, jSInstance, new() { DisposesJSReference = true });
+    }
+
+    /// <summary>
+    /// Reads a chunk of a stream.
+    /// </summary>
+    /// <param name="view">The <see cref="IArrayBufferView"/> that acts as a buffer.</param>
+    /// <param name="options">The options for how the chunk is to be read.</param>
+    /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
+    public async Task<ReadableStreamReadResult> ReadAsync(IArrayBufferView view, ReadableStreamBYOBReaderReadOptions? options = null)
+    {
+        IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("read", view.JSReference, options);
         return new ReadableStreamReadResult(JSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 }

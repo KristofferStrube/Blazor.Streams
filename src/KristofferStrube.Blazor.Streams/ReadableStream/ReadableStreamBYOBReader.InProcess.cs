@@ -56,6 +56,17 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader, IJSIn
     }
 
     /// <summary>
+    /// Reads a chunk of a stream.
+    /// </summary>
+    /// <param name="view">The <see cref="IArrayBufferView"/> that is used as a buffer</param>
+    /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
+    public new async Task<ReadableStreamReadResultInProcess> ReadAsync(IArrayBufferView view, ReadableStreamBYOBReaderReadOptions? options = null)
+    {
+        IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference, options);
+        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
+    }
+
+    /// <summary>
     /// Sets the internal <c>reader</c> slot to <c>undefined</c>.
     /// </summary>
     /// <returns></returns>
