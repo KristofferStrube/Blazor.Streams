@@ -51,7 +51,7 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader, IJSIn
     /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
     public new async Task<ReadableStreamReadResultInProcess> ReadAsync(IArrayBufferView view)
     {
-        IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference);
+        IJSInProcessObjectReference jSInstance = await JSReference.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference);
         return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
     }
 
@@ -59,10 +59,11 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader, IJSIn
     /// Reads a chunk of a stream.
     /// </summary>
     /// <param name="view">The <see cref="IArrayBufferView"/> that is used as a buffer</param>
+    /// <param name="options">The options for how the chunk is to be read.</param>
     /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
     public new async Task<ReadableStreamReadResultInProcess> ReadAsync(IArrayBufferView view, ReadableStreamBYOBReaderReadOptions? options = null)
     {
-        IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference, options);
+        IJSInProcessObjectReference jSInstance = await JSReference.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference, options);
         return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
     }
 
