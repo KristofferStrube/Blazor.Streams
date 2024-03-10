@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2024-03-10
+### Fixed
+- Fixed that `ReadableStreamBYOBReaderInProcess` did not invoke read on the `JSReference` itself.
+
 ## [0.4.0] - 2024-03-10
 ### Deprecated
 - Deprecated `ArrayBufferView` as the `IArrayBufferView` interface from `Blazor.WebIDL` should be used instead.
