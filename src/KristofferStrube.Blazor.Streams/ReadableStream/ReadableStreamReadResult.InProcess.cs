@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -7,15 +8,26 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class ReadableStreamReadResultInProcess : ReadableStreamReadResult
 {
-    private readonly IJSInProcessObjectReference inProcessHelper;
-
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamReadResult"/>.
+    /// An in-process helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamReadResult"/>.</param>
-    internal ReadableStreamReadResultInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected readonly IJSInProcessObjectReference inProcessHelper;
+
+    /// <inheritdoc/>
+    public static async Task<ReadableStreamReadResultInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
+    {
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<ReadableStreamReadResultInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        return new ReadableStreamReadResultInProcess(jSRuntime, inProcesshelper, jSReference, options);
+    }
+
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    internal ReadableStreamReadResultInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
     }

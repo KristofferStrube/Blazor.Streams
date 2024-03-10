@@ -3,25 +3,38 @@ using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
-public abstract class BaseJSWrapper : IAsyncDisposable, IJSWrapper
+/// <summary>
+/// A base class for all wrappers in Blazor.Streams.
+/// </summary>
+public abstract class BaseJSWrapper : IJSWrapper
 {
-    public IJSObjectReference JSReference { get; }
-    public IJSRuntime JSRuntime { get; }
-
+    /// <summary>
+    /// A lazily loaded task that evaluates to a helper module instance from the Blazor.Streams library.
+    /// </summary>
     protected readonly Lazy<Task<IJSObjectReference>> helperTask;
+
+    /// <inheritdoc/>
+    public IJSRuntime JSRuntime { get; }
+    /// <inheritdoc/>
+    public IJSObjectReference JSReference { get; }
+    /// <inheritdoc/>
+    public bool DisposesJSReference { get; }
 
     /// <summary>
     /// Constructs a wrapper instance for an equivalent JS instance.
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing JS instance that should be wrapped..</param>
-    internal BaseJSWrapper(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    /// <param name="jSReference">A JS reference to an existing JS instance that should be wrapped.</param>
+    /// <param name="options">The options for constructing this wrapper.</param>
+    internal BaseJSWrapper(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
     {
         helperTask = new(() => jSRuntime.GetHelperAsync());
+        JSRuntime = jSRuntime;
         JSReference = jSReference;
-        this.JSRuntime = jSRuntime;
+        DisposesJSReference = options.DisposesJSReference;
     }
 
+    /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
         if (helperTask.IsValueCreated)
@@ -29,6 +42,7 @@ public abstract class BaseJSWrapper : IAsyncDisposable, IJSWrapper
             IJSObjectReference module = await helperTask.Value;
             await module.DisposeAsync();
         }
+        await IJSWrapper.DisposeJSReference(this);
         GC.SuppressFinalize(this);
     }
 }

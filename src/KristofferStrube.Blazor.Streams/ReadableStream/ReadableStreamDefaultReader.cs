@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 using System.Runtime.CompilerServices;
 
 namespace KristofferStrube.Blazor.Streams;
@@ -6,7 +7,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#readablestreamdefaultreader">Streams browser specs</see>
 /// </summary>
-public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerable<IJSObjectReference>
+public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerable<IJSObjectReference>, IJSCreatable<ReadableStreamDefaultReader>
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamDefaultReader"/>.
@@ -17,18 +18,19 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ReadableStreamDefaultReader Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return new ReadableStreamDefaultReader(jSRuntime, jSReference);
+        return new ReadableStreamDefaultReader(jSRuntime, jSReference, new());
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamDefaultReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamDefaultReader"/>.</returns>
-    public static Task<ReadableStreamDefaultReader> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    /// <inheritdoc/>
+    public static async Task<ReadableStreamDefaultReader> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return Task.FromResult(new ReadableStreamDefaultReader(jSRuntime, jSReference));
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static Task<ReadableStreamDefaultReader> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
+    {
+        return Task.FromResult(new ReadableStreamDefaultReader(jSRuntime, jSReference, options));
     }
 
     /// <summary>
@@ -41,15 +43,11 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     {
         IJSObjectReference helper = await jSRuntime.GetHelperAsync();
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructReadableStreamDefaultReader", stream.JSReference);
-        return new ReadableStreamDefaultReader(jSRuntime, jSInstance);
+        return new ReadableStreamDefaultReader(jSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS instance of a <see cref="ReadableStreamDefaultReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
-    internal ReadableStreamDefaultReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc />
+    protected internal ReadableStreamDefaultReader(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     /// <summary>
     /// Reads a chunk of a stream.
@@ -58,7 +56,7 @@ public class ReadableStreamDefaultReader : ReadableStreamReader, IAsyncEnumerabl
     public async Task<ReadableStreamReadResult> ReadAsync()
     {
         IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("read");
-        return new ReadableStreamReadResult(JSRuntime, jSInstance);
+        return new ReadableStreamReadResult(JSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 
     public async IAsyncEnumerator<IJSObjectReference> GetAsyncEnumerator(CancellationToken cancellationToken = default)

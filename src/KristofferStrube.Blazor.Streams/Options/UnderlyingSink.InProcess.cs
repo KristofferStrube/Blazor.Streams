@@ -8,7 +8,10 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class UnderlyingSinkInProcess : UnderlyingSink
 {
-    private readonly IJSInProcessObjectReference inProcessHelper;
+    /// <summary>
+    /// An in-process helper module instance from the Blazor.Streams library.
+    /// </summary>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
     /// Constructs a wrapper instance.
@@ -54,7 +57,7 @@ public class UnderlyingSinkInProcess : UnderlyingSink
             return;
         }
 
-        Start.Invoke(new WritableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+        Start.Invoke(new WritableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -65,7 +68,7 @@ public class UnderlyingSinkInProcess : UnderlyingSink
             return;
         }
 
-        Write.Invoke(chunk, new WritableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+        Write.Invoke(chunk, new WritableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -93,6 +96,5 @@ public class UnderlyingSinkInProcess : UnderlyingSink
     public new void Dispose()
     {
         ObjRef.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

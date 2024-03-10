@@ -1,8 +1,12 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
-public class ByteLengthQueuingStrategy : BaseJSWrapper
+/// <summary>
+/// <see href="https://streams.spec.whatwg.org/#blqs-class">Streams browser specs</see>
+/// </summary>
+public class ByteLengthQueuingStrategy : BaseJSWrapper, IJSCreatable<ByteLengthQueuingStrategy>
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="ByteLengthQueuingStrategy"/>.
@@ -13,18 +17,19 @@ public class ByteLengthQueuingStrategy : BaseJSWrapper
     [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ByteLengthQueuingStrategy Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return new ByteLengthQueuingStrategy(jSRuntime, jSReference);
+        return new ByteLengthQueuingStrategy(jSRuntime, jSReference, new());
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ByteLengthQueuingStrategy"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ByteLengthQueuingStrategy"/>.</returns>
-    public static Task<ByteLengthQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    /// <inheritdoc/>
+    public static async Task<ByteLengthQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return Task.FromResult(new ByteLengthQueuingStrategy(jSRuntime, jSReference));
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static Task<ByteLengthQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
+    {
+        return Task.FromResult(new ByteLengthQueuingStrategy(jSRuntime, jSReference, options));
     }
 
     /// <summary>
@@ -37,15 +42,11 @@ public class ByteLengthQueuingStrategy : BaseJSWrapper
     {
         IJSObjectReference helper = await jSRuntime.GetHelperAsync();
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructByteLengthQueuingStrategy", init);
-        return new ByteLengthQueuingStrategy(jSRuntime, jSInstance);
+        return new ByteLengthQueuingStrategy(jSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ByteLengthQueuingStrategy"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
-    protected ByteLengthQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected ByteLengthQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     public async Task<double> GetHighWaterMarkAsync()
     {

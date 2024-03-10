@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -7,12 +8,8 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public abstract class ReadableStreamController : BaseJSWrapper
 {
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamController"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamController"/>.</param>
-    protected ReadableStreamController(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc cref="IJSCreatable{T}.CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected ReadableStreamController(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     /// <summary>
     /// The desired size to fill the controlled stream's internal queue.

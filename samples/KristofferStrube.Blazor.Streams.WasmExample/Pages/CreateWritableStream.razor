@@ -16,7 +16,7 @@ We can create a new instance of a <code>WritableStream</code> which can receive 
 
     protected override async Task OnInitializedAsync()
     {
-        var writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
+        WritableStream writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
             {
                 Write = async (chunk, controller) =>
                 {
@@ -26,7 +26,7 @@ We can create a new instance of a <code>WritableStream</code> which can receive 
                 }
             }, await ByteLengthQueuingStrategy.CreateAsync(JSRuntime, new QueuingStrategyInit(20)));
 
-        var writer = await writableStream.GetWriterAsync();
+        await using WritableStreamDefaultWriter writer = await writableStream.GetWriterAsync();
         for (int i = 0; i < 10; i++)
         {
             await Task.Delay(100);

@@ -1,11 +1,12 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#ws-class-definition">Streams browser specs</see>
 /// </summary>
-public partial class WritableStream : BaseJSStreamableWrapper
+public partial class WritableStream : BaseJSStreamableWrapper, IJSCreatable<WritableStream>
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStream"/>.
@@ -16,18 +17,19 @@ public partial class WritableStream : BaseJSStreamableWrapper
     [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static WritableStream Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return new WritableStream(jSRuntime, jSReference);
+        return new WritableStream(jSRuntime, jSReference, new());
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStream"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="WritableStream"/>.</returns>
-    public static Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    /// <inheritdoc/>
+    public static async Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return Task.FromResult(new WritableStream(jSRuntime, jSReference));
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static Task<WritableStream> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
+    {
+        return Task.FromResult(new WritableStream(jSRuntime, jSReference, options));
     }
 
     /// <summary>
@@ -70,15 +72,11 @@ public partial class WritableStream : BaseJSStreamableWrapper
     {
         IJSObjectReference helper = await jSRuntime.GetHelperAsync();
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructWritableStream", underlyingSink, strategy);
-        return new WritableStream(jSRuntime, jSInstance);
+        return new WritableStream(jSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStream"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStream"/>.</param>
-    protected WritableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected WritableStream(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     /// <summary>
     /// Indicates whether the stream already has a writer.
@@ -115,6 +113,6 @@ public partial class WritableStream : BaseJSStreamableWrapper
     public async Task<WritableStreamDefaultWriter> GetWriterAsync()
     {
         IJSObjectReference jSInstance = await JSReference.InvokeAsync<IJSObjectReference>("getWriter");
-        return await WritableStreamDefaultWriter.CreateAsync(jSRuntime, jSInstance);
+        return await WritableStreamDefaultWriter.CreateAsync(JSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 }

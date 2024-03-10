@@ -1,32 +1,76 @@
 ﻿@page "/Status"
 
+@using HtmlAgilityPack;
+
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Streams - Status</PageTitle>
 
-<pre><code>@((MarkupString)compareText)</code></pre>
+@if (compareText is not null)
+{
+    <pre><code>
+            @((MarkupString)compareText)
+            </code></pre>
+}
+else
+{
+    <text>Loading WebIDL from specs ...</text>
+    <br />
+    <small>This make take a while as it is fetching the current specification live.</small>
+}
 
 @code {
-    private string compareText = "";
+    private string? compareText;
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var compareLines = new List<string>();
-        var lines = webIDL.Replace("<", "&lt;").Split('\n');
-        for (int i = 0; i < lines.Count(); i++)
+        if (firstRender)
         {
-            var color = supportedRows.Any(interval => i >= interval.start && i <= interval.end) ? "lightgreen" : "pink";
-            compareLines.Add($"""<span style="background-color:{color};display:block;min-height:21px;">{lines[i]}</span>""");
-        }
+            string domString = await HttpClient.GetStringAsync("https://streams.spec.whatwg.org/#idl-index");
 
-        compareText = string.Join("", compareLines);
-        StateHasChanged();
+            var dom = new HtmlDocument();
+            dom.LoadHtml(domString);
+            var idlIndexHeader = dom.GetElementbyId("idl-index");
+            var webIDLNode = idlIndexHeader.NextSibling.NextSibling;
+            var webIDLText = webIDLNode.InnerText;
+            // We normalize to indent with 4 spaces as that is inconsistent in the current WebIDL specs.
+            var fetchedLines = webIDLText.Replace("    ", "  ").Replace("\n  ", "\n    ").Split('\n');
+            var supportedLines = currentlySupportedWebIDL.Replace("<", "&lt;").Split('\n');
+            var compareLines = new List<string>();
+            var fetchedIndex = 0;
+            var supportedIndex = 0;
+            while (fetchedIndex < fetchedLines.Length || supportedIndex < supportedLines.Length)
+            {
+                var color = "pink";
+                if (fetchedIndex == fetchedLines.Length)
+                {
+                    color = "cyan";
+                    supportedIndex++;
+                    fetchedIndex--;
+                }
+                else if (supportedIndex == supportedLines.Length)
+                {
+                    color = "lemonchiffon";
+                }
+                else if (fetchedLines[fetchedIndex].Trim() == supportedLines[supportedIndex].Trim())
+                {
+                    color = "lightgreen";
+                    supportedIndex++;
+                }
+                else if (new string(fetchedLines[fetchedIndex].Trim().Take(10).ToArray()) == new string(supportedLines[supportedIndex].Trim().Take(10).ToArray()))
+                {
+                    color = "lemonchiffon";
+                    supportedIndex++;
+                }
+                compareLines.Add($"""<span style="background-color:{color};display:block;min-height:21px;">{fetchedLines[fetchedIndex++]}</span>""");
+            }
+            compareText = string.Join("", compareLines);
+            StateHasChanged();
+        }
     }
 
-    private (int start, int end)[] supportedRows = new (int start, int end)[] { (0, 22), (26, 35), (37, 216) };
-
-    private const string webIDL = @"[Exposed=*, Transferable]
+    private const string currentlySupportedWebIDL = @"[Exposed=*, Transferable]
 interface ReadableStream {
     constructor(optional object underlyingSource, optional QueuingStrategy strategy = {});
 

@@ -71,11 +71,11 @@ public class UnderlyingSource : IDisposable
 
         if (Type is ReadableStreamType.Bytes)
         {
-            await Start.Invoke(new ReadableByteStreamController(jSRuntime, controller));
+            await Start.Invoke(new ReadableByteStreamController(jSRuntime, controller, new() { DisposesJSReference = true }));
         }
         else
         {
-            await Start.Invoke(new ReadableStreamDefaultController(jSRuntime, controller));
+            await Start.Invoke(new ReadableStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
         }
     }
 
@@ -89,11 +89,11 @@ public class UnderlyingSource : IDisposable
 
         if (Type is ReadableStreamType.Bytes)
         {
-            await Pull.Invoke(new ReadableByteStreamController(jSRuntime, controller));
+            await Pull.Invoke(new ReadableByteStreamController(jSRuntime, controller, new() { DisposesJSReference = true }));
         }
         else
         {
-            await Pull.Invoke(new ReadableStreamDefaultController(jSRuntime, controller));
+            await Pull.Invoke(new ReadableStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
         }
     }
 

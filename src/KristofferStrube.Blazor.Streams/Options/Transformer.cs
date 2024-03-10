@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
-/// <see href="https://streams.spec.whatwg.org/#dictdef-underlyingsink">Streams browser specs</see>
+/// <see href="https://streams.spec.whatwg.org/#dictdef-transformer">Streams browser specs</see>
 /// </summary>
 public class Transformer : IDisposable
 {
@@ -62,7 +62,7 @@ public class Transformer : IDisposable
             return;
         }
 
-        await Start.Invoke(new TransformStreamDefaultController(jSRuntime, controller));
+        await Start.Invoke(new TransformStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -73,7 +73,7 @@ public class Transformer : IDisposable
             return;
         }
 
-        await Transform.Invoke(chunk, new TransformStreamDefaultController(jSRuntime, controller));
+        await Transform.Invoke(chunk, new TransformStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -84,7 +84,7 @@ public class Transformer : IDisposable
             return;
         }
 
-        await Flush.Invoke(new TransformStreamDefaultController(jSRuntime, controller));
+        await Flush.Invoke(new TransformStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
     }
 
     public void Dispose()

@@ -65,7 +65,7 @@ public class UnderlyingSink : IDisposable
             return;
         }
 
-        await Start.Invoke(new WritableStreamDefaultController(jSRuntime, controller));
+        await Start.Invoke(new WritableStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -76,7 +76,7 @@ public class UnderlyingSink : IDisposable
             return;
         }
 
-        await Write.Invoke(chunk, new WritableStreamDefaultController(jSRuntime, controller));
+        await Write.Invoke(chunk, new WritableStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]

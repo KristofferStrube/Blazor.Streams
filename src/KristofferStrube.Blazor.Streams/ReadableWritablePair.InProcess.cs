@@ -1,25 +1,32 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-readablewritablepair">Streams browser specs</see>
 /// </summary>
-public class ReadableWritablePairInProcess : ReadableWritablePair, IGenericTransformStreamInProcess
+public class ReadableWritablePairInProcess : ReadableWritablePair, IGenericTransformStreamInProcess, IJSInProcessCreatable<ReadableWritablePairInProcess, ReadableWritablePair>
 {
-    public new IJSInProcessObjectReference JSReference;
-    private readonly IJSInProcessObjectReference inProcessHelper;
-
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableWritablePair"/>.
+    /// An in-process helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="jSReference">An JS reference to an existing ReadableStream.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableWritablePair"/>.</returns>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
+
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
     public static async Task<ReadableWritablePairInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<ReadableWritablePairInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        return new ReadableWritablePairInProcess(jSRuntime, inProcesshelper, jSReference);
+        return new ReadableWritablePairInProcess(jSRuntime, inProcesshelper, jSReference, options);
     }
 
     /// <summary>
@@ -33,16 +40,11 @@ public class ReadableWritablePairInProcess : ReadableWritablePair, IGenericTrans
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableWritablePair", readable, writable);
-        return new ReadableWritablePairInProcess(jSRuntime, inProcesshelper, jSInstance);
+        return new ReadableWritablePairInProcess(jSRuntime, inProcesshelper, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamInProcess"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamInProcess"/>.</param>
-    protected ReadableWritablePairInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    protected ReadableWritablePairInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;
@@ -54,7 +56,7 @@ public class ReadableWritablePairInProcess : ReadableWritablePair, IGenericTrans
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "readable");
-            return new ReadableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
+            return new ReadableStreamInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "readable", value.JSReference);
     }
@@ -65,10 +67,12 @@ public class ReadableWritablePairInProcess : ReadableWritablePair, IGenericTrans
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "writable");
-            return new WritableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
+            return new WritableStreamInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "writable", value.JSReference);
     }
+
+    IJSInProcessObjectReference IJSInProcessCreatable<ReadableWritablePairInProcess, ReadableWritablePair>.JSReference => throw new NotImplementedException();
 
     public new async Task<ReadableStreamInProcess> GetReadableAsync()
     {
