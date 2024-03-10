@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-03-10
+### Deprecated
+- Deprecated `ArrayBufferView` as the `IArrayBufferView` interface from `Blazor.WebIDL` should be used instead.
+### Changed
+- Changed the version of `Blazor.WebIDL` to use the newest version which is `0.5.0`.
+
 ## [0.3.0] - 2023-03-15
 ### Changed
 - Changed .NET version to `7.0`.
