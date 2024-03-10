@@ -61,25 +61,25 @@ export function constructWritableStream(underlyingSink, strategy) {
     return new WritableStream(sink, queueingStrategy(strategy));
 }
 
-export function constructTransformStream(underlyingSink, writableStrategy, readableStrategy) {
+export function constructTransformStream(transformer, writableStrategy, readableStrategy) {
     if (underlyingSink == null) {
         return new TransformStream(null, queueingStrategy(writableStrategy), queueingStrategy(readableStrategy));
     }
-    var sink = {
+    var constructedTransformer = {
         start(controller) {
             underlyingSink.objRef.invokeMethodAsync('InvokeStart', DotNet.createJSObjectReference(controller));
         },
-        write(chunk, controller) {
-            underlyingSink.objRef.invokeMethodAsync('InvokeWrite', DotNet.createJSObjectReference(chunk), DotNet.createJSObjectReference(controller));
+        transform(chunk, controller) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeTransform', DotNet.createJSObjectReference(chunk), DotNet.createJSObjectReference(controller));
         },
-        close() {
-            underlyingSink.objRef.invokeMethodAsync('InvokeClose');
+        flush(controller) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeFlush', DotNet.createJSObjectReference(controller));
         },
-        abort() {
-            underlyingSink.objRef.invokeMethodAsync('InvokeAbort');
+        cancel(reason) {
+            underlyingSink.objRef.invokeMethodAsync('InvokeCancel', DotNet.createJSObjectReference(reason));
         },
     };
-    return new TransformStream(sink, queueingStrategy(writableStrategy), queueingStrategy(readableStrategy));
+    return new TransformStream(constructedTransformer, queueingStrategy(writableStrategy), queueingStrategy(readableStrategy));
 }
 
 function queueingStrategy(strategy) {

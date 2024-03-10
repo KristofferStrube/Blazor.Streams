@@ -37,14 +37,29 @@ public class TransformerInProcess : Transformer
 
     public new DotNetObjectReference<TransformerInProcess> ObjRef { get; init; }
 
+    /// <summary>
+    /// A function that is called immediately during creation of the <see cref="TransformStream"/>.
+    /// </summary>
     [JsonIgnore]
     public new Action<TransformStreamDefaultControllerInProcess>? Start { get; set; }
 
+    /// <summary>
+    /// A function called when a new chunk originally written to the writable side is ready to be transformed.
+    /// </summary>
     [JsonIgnore]
     public new Action<IJSObjectReference, TransformStreamDefaultControllerInProcess>? Transform { get; set; }
 
+    /// <summary>
+    /// A function called after all chunks written to the writable side have been transformed by successfully passing through <see cref="Transform"/>, and the writable side is about to be closed.
+    /// </summary>
     [JsonIgnore]
     public new Action<TransformStreamDefaultControllerInProcess>? Flush { get; set; }
+
+    /// <summary>
+    /// A function called when the readable side is cancelled, or when the writable side is aborted.
+    /// </summary>
+    [JsonIgnore]
+    public new Action<IJSObjectReference>? Cancel { get; set; }
 
     [JSInvokable]
     public void InvokeStart(IJSInProcessObjectReference controller)
@@ -77,5 +92,16 @@ public class TransformerInProcess : Transformer
         }
 
         Flush.Invoke(new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
+    }
+
+    [JSInvokable]
+    public void InvokeCancel(IJSInProcessObjectReference reason)
+    {
+        if (Cancel is null)
+        {
+            return;
+        }
+
+        Cancel.Invoke(reason);
     }
 }

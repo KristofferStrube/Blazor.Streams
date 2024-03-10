@@ -45,14 +45,29 @@ public class Transformer : IDisposable
 
     public DotNetObjectReference<Transformer> ObjRef { get; init; }
 
+    /// <summary>
+    /// A function that is called immediately during creation of the <see cref="TransformStream"/>.
+    /// </summary>
     [JsonIgnore]
     public Func<TransformStreamDefaultController, Task>? Start { get; set; }
 
+    /// <summary>
+    /// A function called when a new chunk originally written to the writable side is ready to be transformed.
+    /// </summary>
     [JsonIgnore]
     public Func<IJSObjectReference, TransformStreamDefaultController, Task>? Transform { get; set; }
 
+    /// <summary>
+    /// A function called after all chunks written to the writable side have been transformed by successfully passing through <see cref="Transform"/>, and the writable side is about to be closed.
+    /// </summary>
     [JsonIgnore]
     public Func<TransformStreamDefaultController, Task>? Flush { get; set; }
+
+    /// <summary>
+    /// A function called when the readable side is cancelled, or when the writable side is aborted.
+    /// </summary>
+    [JsonIgnore]
+    public Func<IJSObjectReference, Task>? Cancel { get; set; }
 
     [JSInvokable]
     public async Task InvokeStart(IJSObjectReference controller)
@@ -85,6 +100,17 @@ public class Transformer : IDisposable
         }
 
         await Flush.Invoke(new TransformStreamDefaultController(jSRuntime, controller, new() { DisposesJSReference = true }));
+    }
+
+    [JSInvokable]
+    public async Task InvokeCancel(IJSObjectReference reason)
+    {
+        if (Cancel is null)
+        {
+            return;
+        }
+
+        await Cancel.Invoke(reason);
     }
 
     public void Dispose()

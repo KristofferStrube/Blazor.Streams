@@ -82,7 +82,6 @@ interface ReadableStream {
     Promise<undefined> pipeTo(WritableStream destination, optional StreamPipeOptions options = {});
     sequence<ReadableStream> tee();
 
-    async iterable<any>(optional ReadableStreamIteratorOptions options = {});
 };
 
 typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStreamReader;
@@ -235,13 +234,13 @@ dictionary Transformer {
     TransformerStartCallback start;
     TransformerTransformCallback transform;
     TransformerFlushCallback flush;
-    any readableType;
-    any writableType;
+    TransformerCancelCallback cancel;
 };
 
 callback TransformerStartCallback = any (TransformStreamDefaultController controller);
 callback TransformerFlushCallback = Promise<undefined> (TransformStreamDefaultController controller);
 callback TransformerTransformCallback = Promise<undefined> (any chunk, TransformStreamDefaultController controller);
+callback TransformerCancelCallback = Promise<undefined> (any reason);
 
 [Exposed=*]
 interface TransformStreamDefaultController {

@@ -33,7 +33,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -46,7 +46,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -59,7 +59,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -72,7 +72,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -85,7 +85,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -98,7 +98,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -111,7 +111,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -124,7 +124,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
@@ -137,7 +137,7 @@ public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<T
     /// Constructs a wrapper instance using the standard constructor.
     /// </summary>
     /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Pull, and/or Cancel methods.</param>
+    /// <param name="transformer">An <see cref="Transformer"/> that which implements the Start, Transform, and/or Cancel methods.</param>
     /// <param name="writableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <param name="readableStrategy">A queing strategy that specifies the chunk size and a high water mark.</param>
     /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
