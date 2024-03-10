@@ -1,22 +1,36 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#rbs-controller-class">Streams browser specs</see>
 /// </summary>
-public class ReadableByteStreamControllerInProcess : ReadableByteStreamController
+public class ReadableByteStreamControllerInProcess : ReadableByteStreamController, IJSInProcessCreatable<ReadableByteStreamControllerInProcess, ReadableByteStreamController>
 {
-    public new IJSInProcessObjectReference JSReference;
-    private readonly IJSInProcessObjectReference inProcessHelper;
-
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableByteStreamController"/>.
+    /// An in-process helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableByteStreamController"/>.</param>
-    internal ReadableByteStreamControllerInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    protected readonly IJSInProcessObjectReference inProcessHelper;
+
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
+    public static async Task<ReadableByteStreamControllerInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
+    {
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<ReadableByteStreamControllerInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        return new ReadableByteStreamControllerInProcess(jSRuntime, inProcesshelper, jSReference, options);
+    }
+
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    protected internal ReadableByteStreamControllerInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;
@@ -35,7 +49,7 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
             {
                 return null;
             }
-            return new ReadableStreamBYOBRequestInProcess(JSRuntime, inProcessHelper, jSInstance);
+            return new ReadableStreamBYOBRequestInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
         }
     }
 
@@ -48,7 +62,6 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
     /// <summary>
     /// Closes the controlled stream once all previously enqueued chunks have been read.
     /// </summary>
-    /// <returns></returns>
     public void Close()
     {
         JSReference.InvokeVoid("close");
@@ -57,9 +70,8 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
     /// <summary>
     /// Enqueues the chunk in the controlled stream.
     /// </summary>
-    /// <param name="chunk">A <see cref="ArrayBufferView"/> supplied as the BYOB.</param>
-    /// <returns></returns>
-    public void Enqueue(ArrayBufferView chunk)
+    /// <param name="chunk">An <see cref="IArrayBufferView"/> supplied as the BYOB.</param>
+    public void Enqueue(IArrayBufferView chunk)
     {
         JSReference.InvokeVoid("enqueue", chunk.JSReference);
     }
@@ -67,7 +79,6 @@ public class ReadableByteStreamControllerInProcess : ReadableByteStreamControlle
     /// <summary>
     /// Errors the controlled stream so that all future interactions will fail.
     /// </summary>
-    /// <returns></returns>
     public void Error()
     {
         JSReference.InvokeVoid("error");

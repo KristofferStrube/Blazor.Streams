@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
@@ -7,12 +8,8 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public abstract class ReadableStreamReader : BaseJSWrapper
 {
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS instance of a <see cref="ReadableStreamReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamReader"/>.</param>
-    protected ReadableStreamReader(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc cref="IJSCreatable{T}.CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected ReadableStreamReader(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     /// <summary>
     /// Sets the internal <c>reader</c> slot to <c>undefined</c>.

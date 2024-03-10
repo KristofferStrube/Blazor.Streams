@@ -1,32 +1,53 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#readablestreambyobrequest">Streams browser specs</see>
 /// </summary>
-public class ReadableStreamBYOBRequest : BaseJSWrapper
+public class ReadableStreamBYOBRequest : BaseJSWrapper, IJSCreatable<ReadableStreamBYOBRequest>
 {
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamBYOBRequest"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBRequest"/>.</param>
-    internal ReadableStreamBYOBRequest(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc/>
+    public static async Task<ReadableStreamBYOBRequest> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    {
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static Task<ReadableStreamBYOBRequest> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
+    {
+        return Task.FromResult(new ReadableStreamBYOBRequest(jSRuntime, jSReference, options));
+    }
+
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected internal ReadableStreamBYOBRequest(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     /// <summary>
     /// The view that should be written to. Is null if it has been responded already.
     /// </summary>
-    /// <returns>A shallow <see cref="ArrayBufferView"/> wrapper.</returns>
-    public async Task<ArrayBufferView?> GetViewAsync()
+    /// <returns>A new concrete implementation of an <see cref="IArrayBufferView"/>.</returns>
+    public async Task<IArrayBufferView?> GetViewAsync()
     {
-        IJSObjectReference helper = await helperTask.Value;
-        IJSObjectReference? jSInstance = await helper.InvokeAsync<IJSObjectReference?>("getAttribute", JSReference, "view");
-        if (jSInstance is null)
+        ValueReference viewAttribute = new(JSRuntime, JSReference, "view");
+
+        viewAttribute.ValueMapper = new()
         {
-            return null;
+            ["float32array"] = async () => await viewAttribute.GetCreatableAsync<Float32Array>(),
+            ["uint8array"] = async () => await viewAttribute.GetCreatableAsync<Uint8Array>(),
+            ["uint16array"] = async () => await viewAttribute.GetCreatableAsync<Uint16Array>(),
+            ["uint32array"] = async () => await viewAttribute.GetCreatableAsync<Uint32Array>()
+        };
+
+        var value = await viewAttribute.GetValueAsync();
+
+        if (value is not IArrayBufferView { } arrayBufferView)
+        {
+            var typeName = await viewAttribute.GetTypeNameAsync();
+            throw new NotSupportedException($"The type of view '{typeName}' is not supported. If you need to use this you can request support for it in the Blazor.WebIDL library.");
         }
-        return new ArrayBufferView(jSInstance);
+
+        return arrayBufferView;
     }
 
     /// <summary>
@@ -40,11 +61,10 @@ public class ReadableStreamBYOBRequest : BaseJSWrapper
     }
 
     /// <summary>
-    /// Indicates that there was supplied a new <see cref="ArrayBufferView"/> as the source for the write.
+    /// Indicates that there was supplied a new <see cref="IArrayBufferView"/> as the source for the write.
     /// </summary>
     /// <param name="view">A new view. The constraints for what this can be are extensive, so look into the documentation if you need this.</param>
-    /// <returns></returns>
-    public async Task RespondWithNewViewAsync(ArrayBufferView view)
+    public async Task RespondWithNewViewAsync(IArrayBufferView view)
     {
         await JSReference.InvokeVoidAsync("respondWithNewView", view.JSReference);
     }

@@ -34,15 +34,15 @@ Cras efficitur libero sed justo ultricies congue et in lacus.In elit orci, phare
 
     protected override async Task OnInitializedAsync()
     {
-        using var data = new System.IO.MemoryStream();
-        using var writer = new StreamWriter(data, encoding);
+        using Stream data = new System.IO.MemoryStream();
+        using StreamWriter writer = new StreamWriter(data, encoding);
         writer.Write(loremIpsum);
         writer.Flush();
         data.Position = 0;
-        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
-        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-        var readableStream = await ReadableStream.CreateAsync(JSRuntime, jSStreamReference);
-        var reader = await readableStream.GetDefaultReaderAsync();
+        using DotNetStreamReference streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        await using IJSInProcessObjectReference jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        await using ReadableStream readableStream = await ReadableStream.CreateAsync(JSRuntime, jSStreamReference);
+        await using ReadableStreamDefaultReader reader = await readableStream.GetDefaultReaderAsync();
         await foreach (string chunk in reader.IterateStringsAsync(encoding))
         {
             result += chunk;

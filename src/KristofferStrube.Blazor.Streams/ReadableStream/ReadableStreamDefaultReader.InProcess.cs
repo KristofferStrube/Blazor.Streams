@@ -1,25 +1,32 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#readablestreamdefaultreader">Streams browser specs</see>
 /// </summary>
-public class ReadableStreamDefaultReaderInProcess : ReadableStreamDefaultReader
+public class ReadableStreamDefaultReaderInProcess : ReadableStreamDefaultReader, IJSInProcessCreatable<ReadableStreamDefaultReaderInProcess, ReadableStreamDefaultReader>
 {
-    public new IJSInProcessObjectReference JSReference;
+    /// <summary>
+    /// An in-process helper module instance from the Blazor.Streams library.
+    /// </summary>
     protected readonly IJSInProcessObjectReference inProcessHelper;
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamDefaultReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamDefaultReader"/>.</returns>
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
     public static async Task<ReadableStreamDefaultReaderInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<ReadableStreamDefaultReaderInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcesshelper, jSReference);
+        return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcesshelper, jSReference, options);
     }
 
     /// <summary>
@@ -32,16 +39,11 @@ public class ReadableStreamDefaultReaderInProcess : ReadableStreamDefaultReader
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableStreamDefaultReader", stream.JSReference);
-        return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcesshelper, jSInstance);
+        return new ReadableStreamDefaultReaderInProcess(jSRuntime, inProcesshelper, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamDefaultReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamDefaultReader"/>.</param>
-    internal ReadableStreamDefaultReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    protected internal ReadableStreamDefaultReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;
@@ -54,7 +56,7 @@ public class ReadableStreamDefaultReaderInProcess : ReadableStreamDefaultReader
     public new async Task<ReadableStreamReadResultInProcess> ReadAsync()
     {
         IJSInProcessObjectReference jSInstance = await JSReference.InvokeAsync<IJSInProcessObjectReference>("read");
-        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance);
+        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
     }
 
     /// <summary>

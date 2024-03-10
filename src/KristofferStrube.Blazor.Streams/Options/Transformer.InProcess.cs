@@ -8,7 +8,10 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class TransformerInProcess : Transformer
 {
-    private readonly IJSInProcessObjectReference inProcessHelper;
+    /// <summary>
+    /// An in-process helper module instance from the Blazor.Streams library.
+    /// </summary>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
     /// Constructs a wrapper instance.
@@ -51,7 +54,7 @@ public class TransformerInProcess : Transformer
             return;
         }
 
-        Start.Invoke(new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+        Start.Invoke(new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -62,7 +65,7 @@ public class TransformerInProcess : Transformer
             return;
         }
 
-        Transform.Invoke(chunk, new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+        Transform.Invoke(chunk, new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
     }
 
     [JSInvokable]
@@ -73,6 +76,6 @@ public class TransformerInProcess : Transformer
             return;
         }
 
-        Flush.Invoke(new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+        Flush.Invoke(new TransformStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
     }
 }

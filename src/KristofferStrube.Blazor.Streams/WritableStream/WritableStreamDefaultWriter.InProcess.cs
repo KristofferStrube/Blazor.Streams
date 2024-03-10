@@ -1,25 +1,32 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#writablestreamdefaultwriter">Streams browser specs</see>
 /// </summary>
-public class WritableStreamDefaultWriterInProcess : WritableStreamDefaultWriter
+public class WritableStreamDefaultWriterInProcess : WritableStreamDefaultWriter, IJSInProcessCreatable<WritableStreamDefaultWriterInProcess, WritableStreamDefaultWriter>
 {
-    public new IJSInProcessObjectReference JSReference;
-    private readonly IJSInProcessObjectReference inProcessHelper;
-
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="WritableStreamDefaultWriter"/>.
+    /// An in-process helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriter"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="WritableStreamDefaultWriter"/>.</returns>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
+
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
     public static async Task<WritableStreamDefaultWriterInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
-        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
-        return new WritableStreamDefaultWriterInProcess(jSRuntime, inProcessHelper, jSReference);
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<WritableStreamDefaultWriterInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        return new WritableStreamDefaultWriterInProcess(jSRuntime, inProcesshelper, jSReference, options);
     }
 
     /// <summary>
@@ -32,16 +39,11 @@ public class WritableStreamDefaultWriterInProcess : WritableStreamDefaultWriter
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("constructWritableStreamDefaultReader", stream.JSReference);
-        return new WritableStreamDefaultWriterInProcess(jSRuntime, inProcessHelper, jSInstance);
+        return new WritableStreamDefaultWriterInProcess(jSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS instance of a <see cref="WritableStreamDefaultWriterInProcess"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="WritableStreamDefaultWriterInProcess"/>.</param>
-    protected internal WritableStreamDefaultWriterInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    protected internal WritableStreamDefaultWriterInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

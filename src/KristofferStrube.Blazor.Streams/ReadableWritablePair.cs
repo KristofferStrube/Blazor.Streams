@@ -1,11 +1,12 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#dictdef-readablewritablepair">Streams browser specs</see>
 /// </summary>
-public class ReadableWritablePair : BaseJSWrapper, IGenericTransformStream
+public class ReadableWritablePair : BaseJSWrapper, IGenericTransformStream, IJSCreatable<ReadableWritablePair>
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableWritablePair"/>.
@@ -16,18 +17,19 @@ public class ReadableWritablePair : BaseJSWrapper, IGenericTransformStream
     [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static ReadableWritablePair Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return new ReadableWritablePair(jSRuntime, jSReference);
+        return new ReadableWritablePair(jSRuntime, jSReference, new());
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableWritablePair"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableWritablePair"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableWritablePair"/>.</returns>
-    public static Task<ReadableWritablePair> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    /// <inheritdoc/>
+    public static async Task<ReadableWritablePair> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return Task.FromResult(new ReadableWritablePair(jSRuntime, jSReference));
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static Task<ReadableWritablePair> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
+    {
+        return Task.FromResult(new ReadableWritablePair(jSRuntime, jSReference, options));
     }
 
     /// <summary>
@@ -41,15 +43,11 @@ public class ReadableWritablePair : BaseJSWrapper, IGenericTransformStream
     {
         IJSObjectReference helper = await jSRuntime.GetHelperAsync();
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructReadableWritablePair", readable.JSReference, writable.JSReference);
-        return new ReadableWritablePair(jSRuntime, jSInstance);
+        return new ReadableWritablePair(jSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableWritablePair"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableWritablePair"/>.</param>
-    protected ReadableWritablePair(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected ReadableWritablePair(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     public async Task<ReadableStream> GetReadableAsync()
     {

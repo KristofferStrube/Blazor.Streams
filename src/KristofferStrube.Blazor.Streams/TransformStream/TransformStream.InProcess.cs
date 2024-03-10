@@ -1,25 +1,32 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#transformstream">Streams browser specs</see>
 /// </summary>
-public class TransformStreamInProcess : TransformStream
+public class TransformStreamInProcess : TransformStream, IJSInProcessCreatable<TransformStreamInProcess, TransformStream>
 {
-    public new IJSInProcessObjectReference JSReference;
-    private readonly IJSInProcessObjectReference inProcessHelper;
-
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="TransformStream"/>.
+    /// An in-process helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="TransformStream"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="TransformStream"/>.</returns>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
+
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
     public static async Task<TransformStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<TransformStreamInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        return new TransformStreamInProcess(jSRuntime, inProcesshelper, jSReference);
+        return new TransformStreamInProcess(jSRuntime, inProcesshelper, jSReference, options);
     }
 
     /// <summary>
@@ -143,16 +150,11 @@ public class TransformStreamInProcess : TransformStream
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = await inProcesshelper.InvokeAsync<IJSInProcessObjectReference>("constructReadableStream", underlyingSource, writableStrategy, readableStrategy);
-        return new TransformStreamInProcess(jSRuntime, inProcesshelper, jSInstance);
+        return new TransformStreamInProcess(jSRuntime, inProcesshelper, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="TransformStream"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="TransformStreamInProcess"/>.</param>
-    protected TransformStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    protected TransformStreamInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;
@@ -163,7 +165,7 @@ public class TransformStreamInProcess : TransformStream
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "readable");
-            return new ReadableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
+            return new ReadableStreamInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "readable", value.JSReference);
     }
@@ -173,7 +175,7 @@ public class TransformStreamInProcess : TransformStream
         get
         {
             IJSInProcessObjectReference jSInstance = inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "writable");
-            return new WritableStreamInProcess(JSRuntime, inProcessHelper, jSInstance);
+            return new WritableStreamInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
         }
         set => inProcessHelper.InvokeVoid("setAttribute", JSReference, "writable", value.JSReference);
     }

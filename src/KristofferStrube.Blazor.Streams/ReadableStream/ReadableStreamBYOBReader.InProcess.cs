@@ -1,47 +1,44 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#readablestreambyobreader">Streams browser specs</see>
 /// </summary>
-public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader
+public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader, IJSInProcessCreatable<ReadableStreamBYOBReaderInProcess, ReadableStreamBYOBReader>
 {
-    public new IJSInProcessObjectReference JSReference;
+    /// <summary>
+    /// An in-process helper module instance from the Blazor.Streams library.
+    /// </summary>
     protected readonly IJSInProcessObjectReference inProcessHelper;
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamBYOBReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
     public static async Task<ReadableStreamBYOBReaderInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
-        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
-        return new ReadableStreamBYOBReaderInProcess(jSRuntime, inProcesshelper, jSReference);
+        return await CreateAsync(jSRuntime, jSReference, new());
     }
 
-    /// <summary>
-    /// Constructs a <see cref="ReadableStreamBYOBReaderInProcess"/> from some <see cref="ReadableStream"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An IJSRuntime instance.</param>
-    /// <param name="stream">A <see cref="ReadableStream"/> wrapper instance.</param>
-    /// <returns>A wrapper instance for a <see cref="ReadableStreamBYOBReader"/>.</returns>
+    /// <inheritdoc/>
+    public static async Task<ReadableStreamBYOBReaderInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        return new ReadableStreamBYOBReaderInProcess(jSRuntime, inProcesshelper, jSReference, options);
+    }
+
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
     public static new async Task<ReadableStreamBYOBReaderInProcess> CreateAsync(IJSRuntime jSRuntime, ReadableStream stream)
     {
         IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = inProcesshelper.Invoke<IJSInProcessObjectReference>("constructReadableStreamBYOBReader", stream.JSReference);
-        return new ReadableStreamBYOBReaderInProcess(jSRuntime, inProcesshelper, jSInstance);
+        return new ReadableStreamBYOBReaderInProcess(jSRuntime, inProcesshelper, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStreamBYOBReader"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ReadableStreamBYOBReader"/>.</param>
-    internal ReadableStreamBYOBReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    internal ReadableStreamBYOBReaderInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;
@@ -50,11 +47,12 @@ public class ReadableStreamBYOBReaderInProcess : ReadableStreamBYOBReader
     /// <summary>
     /// Reads a chunk of a stream.
     /// </summary>
+    /// <param name="view">The <see cref="IArrayBufferView"/> that is used as a buffer</param>
     /// <returns>The next chunk of the underlying <see cref="ReadableStream"/>.</returns>
-    public new async Task<ReadableStreamReadResultInProcess> ReadAsync(ArrayBufferView view)
+    public new async Task<ReadableStreamReadResultInProcess> ReadAsync(IArrayBufferView view)
     {
         IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("read", view.JSReference);
-        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance);
+        return new ReadableStreamReadResultInProcess(JSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
     }
 
     /// <summary>

@@ -16,12 +16,12 @@ In this sample we copy a <code>ReadableStream</code> containing an image to a .N
 
     protected override async Task OnInitializedAsync()
     {
-        var data = await HttpClient.GetStreamAsync("images/mountain.jpg");
-        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
-        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-        var readableStream = await ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
+        using Stream data = await HttpClient.GetStreamAsync("images/mountain.jpg");
+        using DotNetStreamReference streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        await using IJSInProcessObjectReference jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        await using ReadableStreamInProcess readableStream = await ReadableStreamInProcess.CreateAsync(JSRuntime, jSStreamReference);
 
-        using var writeStream = new System.IO.MemoryStream();
+        using MemoryStream writeStream = new System.IO.MemoryStream();
         await readableStream.CopyToAsync(writeStream);
         imageUrl = "data:image/png;base64," + Convert.ToBase64String(writeStream.ToArray());
     }

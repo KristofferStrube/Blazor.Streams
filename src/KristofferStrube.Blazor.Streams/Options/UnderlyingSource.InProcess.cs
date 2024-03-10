@@ -8,7 +8,10 @@ namespace KristofferStrube.Blazor.Streams;
 /// </summary>
 public class UnderlyingSourceInProcess : UnderlyingSource
 {
-    private readonly IJSInProcessObjectReference inProcessHelper;
+    /// <summary>
+    /// An in-process helper module instance from the Blazor.Streams library.
+    /// </summary>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
 
     /// <summary>
     /// Constructs a wrapper instance.
@@ -48,11 +51,11 @@ public class UnderlyingSourceInProcess : UnderlyingSource
     {
         if (Type is ReadableStreamType.Bytes)
         {
-            Start?.Invoke(new ReadableByteStreamControllerInProcess(jSRuntime, inProcessHelper, controller));
+            Start?.Invoke(new ReadableByteStreamControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
         }
         else
         {
-            Start?.Invoke(new ReadableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+            Start?.Invoke(new ReadableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
         }
     }
 
@@ -61,11 +64,11 @@ public class UnderlyingSourceInProcess : UnderlyingSource
     {
         if (Type is ReadableStreamType.Bytes)
         {
-            Pull?.Invoke(new ReadableByteStreamControllerInProcess(jSRuntime, inProcessHelper, controller));
+            Pull?.Invoke(new ReadableByteStreamControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
         }
         else
         {
-            Pull?.Invoke(new ReadableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller));
+            Pull?.Invoke(new ReadableStreamDefaultControllerInProcess(jSRuntime, inProcessHelper, controller, new() { DisposesJSReference = true }));
         }
     }
 
@@ -85,6 +88,5 @@ public class UnderlyingSourceInProcess : UnderlyingSource
     public new void Dispose()
     {
         ObjRef.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

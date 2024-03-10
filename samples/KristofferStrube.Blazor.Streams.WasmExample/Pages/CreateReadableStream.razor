@@ -17,7 +17,7 @@ The for-loop that consumes the <code>ReadableStream</code> also limits its consu
 
     protected override async Task OnInitializedAsync()
     {
-        var readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSource(JSRuntime)
+        await using ReadableStream readableStream = await ReadableStream.CreateAsync(JSRuntime, new UnderlyingSource(JSRuntime)
             {
                 Start = async (ctr) =>
                     {
@@ -41,7 +41,7 @@ The for-loop that consumes the <code>ReadableStream</code> also limits its consu
                 HighWaterMark = 50,
                 Size = _ => 10,
             });
-        var reader = await readableStream.GetDefaultReaderAsync();
+        await using ReadableStreamDefaultReader reader = await readableStream.GetDefaultReaderAsync();
         await foreach (var chunk in reader.IterateByteArraysAsync())
         {
             if (chunk is not null)

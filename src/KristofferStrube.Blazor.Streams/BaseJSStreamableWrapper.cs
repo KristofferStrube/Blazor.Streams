@@ -1,23 +1,34 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
-public abstract class BaseJSStreamableWrapper : Stream, IAsyncDisposable
+/// <summary>
+/// A base class for all streamable wrappers in Blazor.Streams.
+/// </summary>
+public abstract class BaseJSStreamableWrapper : Stream, IAsyncDisposable, IJSWrapper
 {
-    public readonly IJSObjectReference JSReference;
-    protected readonly Lazy<Task<IJSObjectReference>> helperTask;
-    protected readonly IJSRuntime jSRuntime;
-
     /// <summary>
-    /// Constructs a wrapper instance for an equivalent JS instance.
+    /// A lazily loaded task that evaluates to a helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing JS instance that should be wrapped..</param>
-    internal BaseJSStreamableWrapper(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    protected readonly Lazy<Task<IJSObjectReference>> helperTask;
+
+    /// <inheritdoc/>
+    public IJSRuntime JSRuntime { get; }
+
+    /// <inheritdoc/>
+    public IJSObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
+    public bool DisposesJSReference { get; }
+
+    /// <inheritdoc cref="IJSCreatable{T}.CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected internal BaseJSStreamableWrapper(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
     {
         helperTask = new(() => jSRuntime.GetHelperAsync());
+        JSRuntime = jSRuntime;
         JSReference = jSReference;
-        this.jSRuntime = jSRuntime;
+        DisposesJSReference = options.DisposesJSReference;
     }
 
     public override async ValueTask DisposeAsync()

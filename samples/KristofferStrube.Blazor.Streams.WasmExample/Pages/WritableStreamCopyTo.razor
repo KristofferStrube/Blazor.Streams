@@ -16,9 +16,9 @@ In this sample we copy a .NET <code>Stream</code> containing an image to a <code
 
     protected override async Task OnInitializedAsync()
     {
-        var data = await HttpClient.GetStreamAsync("images/mountain.jpg");
+        using Stream data = await HttpClient.GetStreamAsync("images/mountain.jpg");
 
-        var writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
+        WritableStream writableStream = await WritableStream.CreateAsync(JSRuntime, new UnderlyingSink(JSRuntime)
             {
                 Start = (_) =>
                 {

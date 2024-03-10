@@ -1,22 +1,32 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
-public class ByteLengthQueuingStrategyInProcess : ByteLengthQueuingStrategy
+/// <summary>
+/// <see href="https://streams.spec.whatwg.org/#blqs-class">Streams browser specs</see>
+/// </summary>
+public class ByteLengthQueuingStrategyInProcess : ByteLengthQueuingStrategy, IJSInProcessCreatable<ByteLengthQueuingStrategyInProcess, ByteLengthQueuingStrategy>
 {
-    public new IJSInProcessObjectReference JSReference;
-    private readonly IJSInProcessObjectReference inProcessHelper;
-
     /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ByteLengthQueuingStrategy"/>.
+    /// An in-process helper module instance from the Blazor.Streams library.
     /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="ByteLengthQueuingStrategy"/>.</returns>
+    protected readonly IJSInProcessObjectReference inProcessHelper;
+
+    /// <inheritdoc/>
+    public new IJSInProcessObjectReference JSReference { get; }
+
+    /// <inheritdoc/>
     public static async Task<ByteLengthQueuingStrategyInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference)
     {
-        IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
-        return new ByteLengthQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSReference);
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static async Task<ByteLengthQueuingStrategyInProcess> CreateAsync(IJSRuntime jSRuntime, IJSInProcessObjectReference jSReference, CreationOptions options)
+    {
+        IJSInProcessObjectReference inProcesshelper = await jSRuntime.GetInProcessHelperAsync();
+        return new ByteLengthQueuingStrategyInProcess(jSRuntime, inProcesshelper, jSReference, options);
     }
 
     /// <summary>
@@ -29,16 +39,11 @@ public class ByteLengthQueuingStrategyInProcess : ByteLengthQueuingStrategy
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         IJSInProcessObjectReference jSInstance = await inProcessHelper.InvokeAsync<IJSInProcessObjectReference>("constructByteLengthQueuingStrategy", init);
-        return new ByteLengthQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSInstance);
+        return new ByteLengthQueuingStrategyInProcess(jSRuntime, inProcessHelper, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="ByteLengthQueuingStrategy"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="inProcessHelper">An in process helper instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="ByteLengthQueuingStrategy"/>.</param>
-    protected ByteLengthQueuingStrategyInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference) : base(jSRuntime, jSReference)
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSInProcessObjectReference, CreationOptions)"/>
+    protected ByteLengthQueuingStrategyInProcess(IJSRuntime jSRuntime, IJSInProcessObjectReference inProcessHelper, IJSInProcessObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options)
     {
         this.inProcessHelper = inProcessHelper;
         JSReference = jSReference;

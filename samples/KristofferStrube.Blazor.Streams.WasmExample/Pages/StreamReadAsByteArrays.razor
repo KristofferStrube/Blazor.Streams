@@ -21,11 +21,11 @@ We iterate the reader using <code>await foreach (byte[] chunk in reader.IterateB
 
     protected override async Task OnInitializedAsync()
     {
-        using var data = new System.IO.MemoryStream(new byte[dataSize]);
-        using var streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
-        var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
-        var readableStream = await ReadableStream.CreateAsync(JSRuntime, jSStreamReference);
-        var reader = await readableStream.GetDefaultReaderAsync();
+        using Stream data = new System.IO.MemoryStream(new byte[dataSize]);
+        using DotNetStreamReference streamRef = new DotNetStreamReference(stream: data, leaveOpen: false);
+        IJSInProcessObjectReference jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
+        ReadableStream readableStream = await ReadableStream.CreateAsync(JSRuntime, jSStreamReference);
+        ReadableStreamDefaultReader reader = await readableStream.GetDefaultReaderAsync();
         await foreach (byte[] chunk in reader.IterateByteArraysAsync())
         {
             chunkSizes.Add(chunk.Length);

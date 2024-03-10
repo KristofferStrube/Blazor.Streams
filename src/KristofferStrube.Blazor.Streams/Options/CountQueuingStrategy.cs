@@ -1,8 +1,12 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.WebIDL;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
-public class CountQueuingStrategy : BaseJSWrapper
+/// <summary>
+/// <see href="https://streams.spec.whatwg.org/#cqs-class">Streams browser specs</see>
+/// </summary>
+public class CountQueuingStrategy : BaseJSWrapper, IJSCreatable<CountQueuingStrategy>
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="CountQueuingStrategy"/>.
@@ -13,18 +17,19 @@ public class CountQueuingStrategy : BaseJSWrapper
     [Obsolete("This will be removed in the next major release as all creator methods should be asynchronous for uniformity. Use CreateAsync instead.")]
     public static CountQueuingStrategy Create(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return new CountQueuingStrategy(jSRuntime, jSReference);
+        return new CountQueuingStrategy(jSRuntime, jSReference, new());
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="CountQueuingStrategy"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
-    /// <returns>A wrapper instance for a <see cref="CountQueuingStrategy"/>.</returns>
-    public static Task<CountQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
+    /// <inheritdoc/>
+    public static async Task<CountQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference)
     {
-        return Task.FromResult(new CountQueuingStrategy(jSRuntime, jSReference));
+        return await CreateAsync(jSRuntime, jSReference, new());
+    }
+
+    /// <inheritdoc/>
+    public static Task<CountQueuingStrategy> CreateAsync(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
+    {
+        return Task.FromResult(new CountQueuingStrategy(jSRuntime, jSReference, options));
     }
 
     /// <summary>
@@ -37,15 +42,11 @@ public class CountQueuingStrategy : BaseJSWrapper
     {
         IJSObjectReference helper = await jSRuntime.GetHelperAsync();
         IJSObjectReference jSInstance = await helper.InvokeAsync<IJSObjectReference>("constructCountQueuingStrategy", init);
-        return new CountQueuingStrategy(jSRuntime, jSInstance);
+        return new CountQueuingStrategy(jSRuntime, jSInstance, new() { DisposesJSReference = true });
     }
 
-    /// <summary>
-    /// Constructs a wrapper instance for a given JS Instance of a <see cref="CountQueuingStrategy"/>.
-    /// </summary>
-    /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
-    /// <param name="jSReference">A JS reference to an existing <see cref="CountQueuingStrategy"/>.</param>
-    protected CountQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference) : base(jSRuntime, jSReference) { }
+    /// <inheritdoc cref="CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
+    protected CountQueuingStrategy(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options) : base(jSRuntime, jSReference, options) { }
 
     public async Task<double> GetHighWaterMarkAsync()
     {
