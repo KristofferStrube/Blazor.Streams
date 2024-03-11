@@ -35,8 +35,8 @@ public class ReadableStreamReadResultInProcess : ReadableStreamReadResult
     /// <summary>
     /// A JS Reference to a chunk of data.
     /// </summary>
-    /// <returns>A <see cref="IJSObjectReference"/> to a value which can be of <c>any</c> type.</returns>
-    public IJSObjectReference Value => inProcessHelper.Invoke<IJSObjectReference>("getAttribute", JSReference, "value");
+    /// <returns>An <see cref="IJSInProcessObjectReference"/> to a value which can be of <c>any</c> type.</returns>
+    public IJSInProcessObjectReference Value => inProcessHelper.Invoke<IJSInProcessObjectReference>("getAttribute", JSReference, "value");
 
     /// <summary>
     /// Indicates whether this is the last read which means that <see cref="Value"/> will be <c>undefined</c>.
