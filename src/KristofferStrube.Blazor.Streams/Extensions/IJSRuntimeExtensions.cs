@@ -1,17 +1,20 @@
-﻿using Microsoft.JSInterop;
+﻿using KristofferStrube.Blazor.FileAPI.Options;
+using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.Streams;
 
 internal static class IJSRuntimeExtensions
 {
-    internal static async Task<IJSObjectReference> GetHelperAsync(this IJSRuntime jSRuntime)
+    internal static async Task<IJSObjectReference> GetHelperAsync(this IJSRuntime jSRuntime, StreamsOptions? options = null)
     {
+        options ??= StreamsOptions.DefaultInstance;
         return await jSRuntime.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/KristofferStrube.Blazor.Streams/KristofferStrube.Blazor.Streams.js");
+            "import", options.FullScriptPath);
     }
-    internal static async Task<IJSInProcessObjectReference> GetInProcessHelperAsync(this IJSRuntime jSRuntime)
+    internal static async Task<IJSInProcessObjectReference> GetInProcessHelperAsync(this IJSRuntime jSRuntime, StreamsOptions? options = null)
     {
+        options ??= StreamsOptions.DefaultInstance;
         return await jSRuntime.InvokeAsync<IJSInProcessObjectReference>(
-            "import", "./_content/KristofferStrube.Blazor.Streams/KristofferStrube.Blazor.Streams.js");
+            "import", options.FullScriptPath);
     }
 }
