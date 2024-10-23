@@ -64,11 +64,11 @@ public class ReadableStreamBYOBRequestInProcess : ReadableStreamBYOBRequest, IJS
             ["uint32array"] = async () => await viewAttribute.GetCreatableAsync<Uint32ArrayInProcess, Uint32Array>()
         };
 
-        var value = await viewAttribute.GetValueAsync();
+        object? value = await viewAttribute.GetValueAsync();
 
         if (value is not IArrayBufferView { } arrayBufferView)
         {
-            var typeName = await viewAttribute.GetTypeNameAsync();
+            string typeName = await viewAttribute.GetTypeNameAsync();
             throw new NotSupportedException($"The type of view '{typeName}' is not supported. If you need to use this you can request support for it in the Blazor.WebIDL library.");
         }
 

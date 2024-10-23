@@ -1,6 +1,5 @@
 ﻿using KristofferStrube.Blazor.WebIDL;
 using Microsoft.JSInterop;
-using System.Runtime.InteropServices;
 
 namespace KristofferStrube.Blazor.Streams;
 

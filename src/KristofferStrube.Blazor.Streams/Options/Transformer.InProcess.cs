@@ -18,7 +18,7 @@ public class TransformerInProcess : Transformer
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new wrapper instance for a <see cref="TransformerInProcess"/>.</returns>
-    public new static async Task<TransformerInProcess> CreateAsync(IJSRuntime jSRuntime)
+    public static new async Task<TransformerInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new TransformerInProcess(jSRuntime, inProcessHelper);

@@ -18,7 +18,7 @@ public class UnderlyingSinkInProcess : UnderlyingSink
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new wrapper instance for a <see cref="UnderlyingSinkInProcess"/>.</returns>
-    public new static async Task<UnderlyingSinkInProcess> CreateAsync(IJSRuntime jSRuntime)
+    public static new async Task<UnderlyingSinkInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new UnderlyingSinkInProcess(jSRuntime, inProcessHelper);

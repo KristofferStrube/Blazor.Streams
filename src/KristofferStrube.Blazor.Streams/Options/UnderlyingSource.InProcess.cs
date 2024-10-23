@@ -18,7 +18,7 @@ public class UnderlyingSourceInProcess : UnderlyingSource
     /// </summary>
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     /// <returns>A new wrapper instance for a <see cref="UnderlyingSource"/>.</returns>
-    public new static async Task<UnderlyingSourceInProcess> CreateAsync(IJSRuntime jSRuntime)
+    public static new async Task<UnderlyingSourceInProcess> CreateAsync(IJSRuntime jSRuntime)
     {
         IJSInProcessObjectReference inProcessHelper = await jSRuntime.GetInProcessHelperAsync();
         return new UnderlyingSourceInProcess(jSRuntime, inProcessHelper);
