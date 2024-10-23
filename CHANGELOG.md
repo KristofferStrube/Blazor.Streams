@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-10-23
+### Changed
+- Changed the version of `Blazor.DOM` to use the newest version which is `0.3.0`.
+
 ## [0.4.2] - 2024-03-11
 ### Changed
 - Changed `ReadableStreamReadResultInProcess.Value` to return `IJSInProcessObjectReference` instead of `IJSObjectReference`.
