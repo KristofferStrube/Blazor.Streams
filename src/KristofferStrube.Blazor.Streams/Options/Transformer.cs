@@ -38,7 +38,7 @@ public class Transformer : IDisposable
     /// <param name="jSRuntime">An <see cref="IJSRuntime"/> instance.</param>
     protected Transformer(IJSRuntime jSRuntime)
     {
-        helperTask = new(jSRuntime.GetHelperAsync);
+        helperTask = new(() => jSRuntime.GetHelperAsync());
         this.jSRuntime = jSRuntime;
         ObjRef = DotNetObjectReference.Create(this);
     }
