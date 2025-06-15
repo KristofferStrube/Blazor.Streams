@@ -1,22 +1,22 @@
 ﻿using KristofferStrube.Blazor.FileAPI.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 
-namespace KristofferStrube.Blazor.Streams;
-
-public static class IServiceCollectionExtensions
+namespace KristofferStrube.Blazor.Streams
 {
-    public static IServiceCollection AddStreams(this IServiceCollection serviceCollection, Action<StreamsOptions>? configure)
+    public static class IServiceCollectionExtensions
     {
-        serviceCollection.ConfigureStreamOptions(configure);
-        return serviceCollection;
-    }
+        public static IServiceCollection AddStreams(this IServiceCollection serviceCollection, Action<StreamsOptions>? configure)
+        {
+            serviceCollection.ConfigureStreamOptions(configure);
+            return serviceCollection;
+        }
 
-    private static void ConfigureStreamOptions(this IServiceCollection services, Action<StreamsOptions>? configure)
-    {
-        if (configure is null) return;
+        private static void ConfigureStreamOptions(this IServiceCollection services, Action<StreamsOptions>? configure)
+        {
+            if (configure is null) return;
 
-        services.Configure(configure);
-        configure(StreamsOptions.DefaultInstance);
+            services.Configure(configure);
+            configure(StreamsOptions.DefaultInstance);
+        }
     }
 }
