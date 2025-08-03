@@ -1,0 +1,17 @@
+﻿@page "/"
+
+<span data-testid="result">@result</span>
+
+@code {
+    string? result;
+
+    [Inject]
+    public required EvaluationContext EvaluationContext { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        result = "done";
+        StateHasChanged();
+    }
+}
