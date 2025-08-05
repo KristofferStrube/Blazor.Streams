@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Changed the `Stream` override of `ReadAsync` in `ReadableStream` so that it saves the rest of a read value of not all of it can fit in the `buffer` that it is to be copied to.
 
 ## [0.5.0] - 2024-10-23
 ### Changed
