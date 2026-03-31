@@ -4,7 +4,10 @@ using KristofferStrube.Blazor.WebIDL;
 
 namespace IntegrationTests;
 
-public class ReadableStreamStreamTests(Browser browserName) : BlazorTest(browserName)
+[TestFixture(Infrastructure.Browser.Firefox)]
+[TestFixture(Infrastructure.Browser.Webkit)]
+[TestFixture(Infrastructure.Browser.Chrome)]
+public class ReadableStreamTests(Browser browserName) : BlazorTest(browserName)
 {
     [Test]
     public async Task ReadAsync_ShouldNotReadMoreThanBufferSize()
@@ -39,14 +42,14 @@ public class ReadableStreamStreamTests(Browser browserName) : BlazorTest(browser
         int bytesReadThirdTime = await stream.ReadAsync(thirdBuffer);
 
         // Assert
-        _ = bytesReadFirstTime.Should().Be(1);
-        _ = firstBuffer.Should().BeEquivalentTo([1]);
+        bytesReadFirstTime.Should().Be(1);
+        firstBuffer.Should().BeEquivalentTo([1]);
 
-        _ = bytesReadSecondTime.Should().Be(2);
-        _ = secondBuffer.Should().BeEquivalentTo([1, 2]);
+        bytesReadSecondTime.Should().Be(2);
+        secondBuffer.Should().BeEquivalentTo([1, 2]);
 
-        _ = bytesReadSecondTime.Should().Be(2);
-        _ = thirdBuffer.Should().BeEquivalentTo([2,3]);
+        bytesReadSecondTime.Should().Be(2);
+        thirdBuffer.Should().BeEquivalentTo([2,3]);
     }
 
     [Test]
@@ -79,10 +82,10 @@ public class ReadableStreamStreamTests(Browser browserName) : BlazorTest(browser
         int bytesReadSecondTime = await stream.ReadAsync(secondBuffer);
 
         // Assert
-        _ = bytesReadFirstTime.Should().BeLessThanOrEqualTo(15);
-        _ = firstBuffer[..10].Should().AllBeEquivalentTo(1);
+        bytesReadFirstTime.Should().BeLessThanOrEqualTo(15);
+        firstBuffer[..10].Should().AllBeEquivalentTo(1);
 
-        _ = bytesReadSecondTime.Should().BeLessThanOrEqualTo(12);
-        _ = secondBuffer[..10].Should().AllBeEquivalentTo(2);
+        bytesReadSecondTime.Should().BeLessThanOrEqualTo(12);
+        secondBuffer[..10].Should().AllBeEquivalentTo(2);
     }
 }

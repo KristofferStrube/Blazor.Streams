@@ -1,5 +1,4 @@
 using BlazorServer;
-using IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Features;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.JSInterop;
 using Microsoft.Playwright;
 
-namespace KristofferStrube.Blazor.WebAudio.IntegrationTests.Infrastructure;
+namespace IntegrationTests.Infrastructure;
 
 public enum Browser
 {
@@ -17,9 +16,6 @@ public enum Browser
     Chrome,
 }
 
-[TestFixture(Infrastructure.Browser.Firefox)]
-[TestFixture(Infrastructure.Browser.Webkit)]
-[TestFixture(Infrastructure.Browser.Chrome)]
 public class BlazorTest(Browser browserName)
 {
     private IHost? _host;
@@ -62,7 +58,7 @@ public class BlazorTest(Browser browserName)
         _host = BlazorServer.Program.BuildWebHost([],
             serviceBuilder =>
             {
-                _ = serviceBuilder
+                serviceBuilder
                     .AddScoped(typeof(EvaluationContext), EvaluationContextCreator);
             }
         );
@@ -108,7 +104,7 @@ public class BlazorTest(Browser browserName)
 
     protected async Task OnAfterRerenderAsync()
     {
-        _ = await Page.GotoAsync(RootUri.AbsoluteUri);
+        await Page.GotoAsync(RootUri.AbsoluteUri);
         await Assertions.Expect(Page.GetByTestId("result")).ToHaveTextAsync($"done");
     }
 }
