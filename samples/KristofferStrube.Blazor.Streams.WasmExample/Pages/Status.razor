@@ -82,6 +82,7 @@ interface ReadableStream {
     Promise<undefined> pipeTo(WritableStream destination, optional StreamPipeOptions options = {});
     sequence<ReadableStream> tee();
 
+    async_iterable<any>(optional ReadableStreamIteratorOptions options = {});
 };
 
 typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStreamReader;
@@ -90,6 +91,10 @@ enum ReadableStreamReaderMode { ""byob"" };
 
 dictionary ReadableStreamGetReaderOptions {
     ReadableStreamReaderMode mode;
+};
+
+dictionary ReadableStreamIteratorOptions {
+    boolean preventCancel = false;
 };
 
 dictionary ReadableWritablePair {
@@ -285,6 +290,8 @@ interface CountQueuingStrategy {
 interface mixin GenericTransformStream {
     readonly attribute ReadableStream readable;
     readonly attribute WritableStream writable;
-};";
+};
+
+";
 
 }

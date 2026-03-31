@@ -6,7 +6,7 @@ namespace KristofferStrube.Blazor.Streams;
 /// <summary>
 /// <see href="https://streams.spec.whatwg.org/#rs-class-definition">Streams browser specs</see>
 /// </summary>
-public partial class ReadableStream : BaseJSStreamableWrapper, IJSCreatable<ReadableStream>
+public partial class ReadableStream : BaseJSStreamableWrapper, IJSCreatable<ReadableStream>, IValueAsyncIterable<ReadableStream, ValueReference, ReadableStreamIteratorOptions>
 {
     /// <summary>
     /// Constructs a wrapper instance for a given JS Instance of a <see cref="ReadableStream"/>.
