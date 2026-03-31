@@ -29,8 +29,8 @@ public class ReadableByteStreamController : ReadableStreamController, IJSCreatab
     /// <returns>A <see cref="ReadableStreamBYOBRequest"/></returns>
     public async Task<ReadableStreamBYOBRequest?> GetBYOBRequestAsync()
     {
-        IJSObjectReference helper = await helperTask.Value;
-        IJSObjectReference? jSInstance = await helper.InvokeAsync<IJSObjectReference?>("getAttribute", JSReference, "byobRequest");
+        await using ValueReference valueReference = new(JSRuntime, JSReference, "byobRequest");
+        var jSInstance = (IJSObjectReference?)await valueReference.GetValueAsync();
         if (jSInstance is null)
         {
             return null;
