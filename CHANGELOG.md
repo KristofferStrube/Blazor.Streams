@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed that `ReadableByteStreamController.GetBYOBRequestAsync` could not handle when the `byobRequest` was `null`.
 ### Changed
 - Changed the `Stream` override of `ReadAsync` in `ReadableStream` so that it saves the rest of a read value if not all of it can fit in the `buffer` that it is to be copied to.
+### Added
+- Added `IValueAsyncIterable` interface as decoration to `ReadableStream` so that it can be iterated using the `ValuesAsync` extension methods.
 
 ## [0.5.0] - 2024-10-23
 ### Changed
