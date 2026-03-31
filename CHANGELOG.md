@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed that `ReadableByteStreamController.GetBYOBRequestAsync` could not handle when the `byobRequest` was `null`.
 ### Changed
 - Changed the `Stream` override of `ReadAsync` in `ReadableStream` so that it saves the rest of a read value if not all of it can fit in the `buffer` that it is to be copied to.
+- Changed the version of `Blazor.DOM` to use the newest version, which is `0.4.0`.
 ### Added
 - Added `IValueAsyncIterable` interface as decoration to `ReadableStream` so that it can be iterated using the `ValuesAsync` extension methods.
 
