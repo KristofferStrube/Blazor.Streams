@@ -95,6 +95,6 @@ public partial class ReadableStream
         }
         await reader.ReleaseLockAsync();
         reader = null;
-        return 0;
+        return bytesCopiedFromExcessDataReadPreviously;
     }
 }
