@@ -88,4 +88,39 @@ public class ReadableStreamTests(Browser browserName) : BlazorTest(browserName)
         bytesReadSecondTime.Should().BeLessThanOrEqualTo(12);
         secondBuffer[..10].Should().AllBeEquivalentTo(2);
     }
+
+    [Test]
+    public async Task ReadAsync_ShouldYieldExcessDataFromPriorRead_EvenWhenStreamIsDone()
+    {
+        // Arrange
+        await using CountQueuingStrategy strategy = await CountQueuingStrategy.CreateAsync(JSRuntime, new QueuingStrategyInit(1));
+
+        await using ReadableStream stream = await ReadableStream.CreateAsync(JSRuntime,
+            underlyingSource: new UnderlyingSource(JSRuntime)
+            {
+                Start = async (ctr) =>
+                {
+                    ReadableStreamDefaultController controller = ((ReadableStreamDefaultController)ctr)!;
+                    await using Uint8Array byteArray = await Uint8Array.CreateAsync(JSRuntime, 10);
+                    await byteArray.FillAsync(13);
+                    await controller.EnqueueAsync(byteArray.JSReference);
+                    await controller.CloseAsync();
+                }
+            },
+            strategy: strategy);
+
+        // Act
+        byte[] firstBuffer = new byte[5];
+        int bytesReadFirstTime = await stream.ReadAsync(firstBuffer);
+
+        byte[] secondBuffer = new byte[10];
+        int bytesReadSecondTime = await stream.ReadAsync(secondBuffer);
+
+        // Assert
+        bytesReadFirstTime.Should().Be(5);
+        firstBuffer.Should().AllBeEquivalentTo(13);
+
+        bytesReadSecondTime.Should().Be(5);
+        secondBuffer[..5].Should().AllBeEquivalentTo(13);
+    }
 }
