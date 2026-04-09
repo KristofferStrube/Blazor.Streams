@@ -25,12 +25,13 @@ public abstract class BaseJSStreamableWrapper : Stream, IAsyncDisposable, IJSWra
     /// <inheritdoc cref="IJSCreatable{T}.CreateAsync(IJSRuntime, IJSObjectReference, CreationOptions)"/>
     protected internal BaseJSStreamableWrapper(IJSRuntime jSRuntime, IJSObjectReference jSReference, CreationOptions options)
     {
-        helperTask = new(() => jSRuntime.GetHelperAsync());
+        helperTask = new(jSRuntime.GetHelperAsync);
         JSRuntime = jSRuntime;
         JSReference = jSReference;
         DisposesJSReference = options.DisposesJSReference;
     }
 
+    /// <inheritdoc/>
     public override async ValueTask DisposeAsync()
     {
         await base.DisposeAsync();
@@ -39,6 +40,7 @@ public abstract class BaseJSStreamableWrapper : Stream, IAsyncDisposable, IJSWra
             IJSObjectReference module = await helperTask.Value;
             await module.DisposeAsync();
         }
+        await IJSWrapper.DisposeJSReference(this);
         GC.SuppressFinalize(this);
     }
 }
