@@ -46,14 +46,14 @@ public partial class WritableStream
 
     public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-        await WriteAsync(buffer, cancellationToken);
+        writer ??= await GetWriterAsync();
+        await writer.WriteAsync(buffer[offset..(offset+count)]);
     }
 
     public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
     {
         writer ??= await GetWriterAsync();
-        IJSObjectReference helper = await helperTask.Value;
-        await writer.WriteAsync(await helper.InvokeAsync<IJSObjectReference>("valueOf", buffer.ToArray()));
+        await writer.WriteAsync(buffer.ToArray());
     }
 
     public override async Task FlushAsync(CancellationToken cancellationToken)
@@ -64,13 +64,15 @@ public partial class WritableStream
         }
 
         await writer.CloseAsync();
+        await writer.ReleaseLockAsync();
+        await writer.DisposeAsync();
         writer = null;
     }
 
     public override async ValueTask DisposeAsync()
     {
+        await FlushAsync();
         await base.DisposeAsync();
-        await CloseAsync();
         GC.SuppressFinalize(this);
     }
 }
