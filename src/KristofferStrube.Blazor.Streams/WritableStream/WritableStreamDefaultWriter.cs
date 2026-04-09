@@ -108,9 +108,17 @@ public class WritableStreamDefaultWriter : BaseJSWrapper, IJSCreatable<WritableS
     /// <summary>
     /// Writes the chunk to the writable stream once any previous writes have finished successfully.
     /// </summary>
-    /// <param name="chunk"></param>
-    /// <returns></returns>
+    /// <param name="chunk">Any <see cref="IJSObjectReference"/> that can be written to the writable stream.</param>
     public async Task WriteAsync(IJSObjectReference chunk)
+    {
+        await JSReference.InvokeVoidAsync("write", chunk);
+    }
+
+    /// <summary>
+    /// Writes the chunk to the writable stream once any previous writes have finished successfully.
+    /// </summary>
+    /// <param name="chunk">A byte array</param>
+    public async Task WriteAsync(byte[] chunk)
     {
         await JSReference.InvokeVoidAsync("write", chunk);
     }
