@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-04-09
+### Fixed
+- Fixed that `WritableStream.FlushAsync(CancellationToken)` would not dispose of the writer and release its lock on the stream.
+- Fixed that stream types would not dispose their `JSReference`s when being disposed.
+### Added
+- Added overload to `WritableStreamDefaultWriter.WriteAsync` that can write a byte array.
+
 ## [0.6.1] - 2026-04-04
 ### Fixed
 - Fixed that `ReadableStream.ReadAsync(Memory<byte>, CancellationToken)` would not report the right number of read bytes when the stream reader was done.
