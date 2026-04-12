@@ -63,7 +63,6 @@ public partial class WritableStream
             return;
         }
 
-        await writer.CloseAsync();
         await writer.ReleaseLockAsync();
         await writer.DisposeAsync();
         writer = null;
@@ -72,6 +71,7 @@ public partial class WritableStream
     public override async ValueTask DisposeAsync()
     {
         await FlushAsync();
+        await CloseAsync();
         await base.DisposeAsync();
         GC.SuppressFinalize(this);
     }
