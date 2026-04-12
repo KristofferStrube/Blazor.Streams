@@ -51,10 +51,10 @@ We can call the constructor for `ReadableStream`, `WritableStream`, or `Transfor
         var jSStreamReference = await JSRuntime.InvokeAsync<IJSInProcessObjectReference>("jSStreamReference", streamRef);
         
         // Create a wrapper instance of the ReadableStream.
-        var readableStream = await ReadableStream.CreateAsync(JSRuntime, jSStreamReference);
+        var readableStream = await ReadableStream.CreateAsync(JSRuntime, jSStreamReference, new() { DisposesJSReference = true });
 
         // Get the reader and iterate that.
-        var readableStreamReader = await readableStream.GetDefaultReaderAsync();
+        await using var readableStreamReader = await readableStream.GetDefaultReaderAsync();
         await foreach (var chunk in readableStreamReader)
         {
             var length = await JSRuntime.InvokeAsync<int>("getAttribute", chunk, "length");

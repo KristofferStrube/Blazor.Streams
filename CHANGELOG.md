@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-04-12
+### Fixed
+- Fixed that version 0.6.2 had changed `WritableStream` to not close itself when being disposed.
+
 ## [0.6.2] - 2026-04-09
 ### Fixed
 - Fixed that `WritableStream.FlushAsync(CancellationToken)` would not dispose of the writer and release its lock on the stream.
